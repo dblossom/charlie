@@ -24,7 +24,6 @@ package charlie.plugin;
 
 import charlie.card.Hid;
 import charlie.view.AMoneyManager;
-import charlie.view.sprite.Chip;
 import java.awt.Graphics2D;
 
 /**

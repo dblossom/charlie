@@ -364,6 +364,8 @@ public class Dealer implements Serializable {
         Card card = shoe.next();
         
         hand.hit(card);
+        LOG.info("hit hid = "+hid+" with "+card);
+        
         for (IPlayer _player : playerSequence)
             _player.deal(hid, card, hand.getValues());
         
@@ -404,9 +406,11 @@ public class Dealer implements Serializable {
         // Validate the request
         Hand hand = validate(hid);
         if(hand == null) {
-            LOG.error("got invalide STAY player = "+player);
+            LOG.error("got invalid STAY player = "+player);
             return;
         }
+        
+        LOG.info("got STAY for "+hid);
         
         // Since player stayed, we're done with hand
         goNextHand();
@@ -456,6 +460,8 @@ public class Dealer implements Serializable {
      * Moves to the next hand at the table
      */
     protected void goNextHand() {
+        LOG.info("going to next hand");
+        
         // Get next hand and inform player
         if (handSeqIndex < handSequence.size()) {
             Hid hid = handSequence.get(handSeqIndex++);
