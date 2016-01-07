@@ -38,7 +38,7 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 import charlie.util.Point;
 import charlie.dealer.Seat;
-import charlie.plugin.IGerty;
+import charlie.plugin.ILogan;
 import charlie.plugin.ISideBetView;
 import charlie.util.Constant;
 import java.awt.Image;
@@ -95,6 +95,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     protected final GameFrame frame;
     protected boolean bettable = false;
     protected boolean gameOver = true;
+    protected boolean shufflePending = false;
     protected int shoeSize;
     protected Image instrImg;
     protected Image shoeImg;
@@ -106,7 +107,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     protected int winnerCount;
     protected ISideBetView sideBetView;
     protected Properties props; 
-    protected IGerty gerty;
+    protected ILogan logan;
     private Card holeCard;
     private int[] holeValues;
     protected Courier courier;
@@ -245,8 +246,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(burnCard.isVisible())
             burnCard.render(g);
         
-        if(gerty != null)
-            gerty.render(g);
+        if(logan != null)
+            logan.render(g);
         
         // Java tool related stuff
         Toolkit.getDefaultToolkit().sync();
@@ -284,8 +285,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         
         burnCard.update();
         
-        if(gerty != null)
-            gerty.update();
+        if(logan != null)
+            logan.update();
        
     }
 
@@ -301,26 +302,22 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      */
     @Override
     public void run() {
-        long beforeTime, timeDiff, sleep;
-
-        beforeTime = System.currentTimeMillis();
+        long beforeTime = System.currentTimeMillis();
 
         while (true) {
             update();
 
             render();
 
-            timeDiff = System.currentTimeMillis() - beforeTime;
-            sleep = DELAY - timeDiff;
+            long timeDiff = System.currentTimeMillis() - beforeTime;
+            
+            double sleep = (DELAY - timeDiff)/1000.0;
 
             if (sleep < 0) {
                 sleep = 2;
             }
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                System.out.println("interrupted");
-            }
+            
+            timeout(sleep);
 
             beforeTime = System.currentTimeMillis();
         }
@@ -368,10 +365,10 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             // Reveal dealer's hole card
             hand.get(0).flip();
             
-            // Inform gety since we bypassed sending this to gerty during the deal
+            // Inform gety since we bypassed sending this to logan during the deal
             // This is really only important at this stage for counting cards.
-            if(gerty != null)
-                gerty.deal(hid, holeCard, holeValues);
+            if(logan != null)
+                logan.deal(hid, holeCard, holeValues);
             
             // Disable the "turn" signal
             // Note: "turn" will be null on dealer blackjack in which case
@@ -399,7 +396,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
                 enable = false;
             }
 
-            if (gerty == null) {
+            if (logan == null) {
                 this.frame.enableTrucking(enable);
                 this.frame.enablePlay(enable);
             }
@@ -407,7 +404,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
                 new Thread(new Runnable() { 
                     @Override
                     public void run() {
-                        gerty.play(hid);
+                        logan.play(hid);
                     }
                 }).start();
 
@@ -425,10 +422,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      * @param handValues Hand values
      */
     @Override
-    public synchronized void deal(final Hid hid, final Card card, final int[] handValues) {
-        // Get the burn card off the table
-        burnCard.clear();
-        
+    public synchronized void deal(final Hid hid, final Card card, final int[] handValues) {       
         SoundFactory.play(Effect.DEAL);
 
         AHand hand = manos.get(hid);
@@ -448,18 +442,18 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         // Let the advisor, if it exists, know what's going on
         frame.deal(hid, card, handValues);
         
-        // Let Gerty, if it exists, know what's going on except for the hole card
-        // which we'll send to Gerty when it's the dealer's turn.
+        // Let Logan, if it exists, know what's going on except for the hole card
+        // which we'll send to Logan when it's the dealer's turn.
         if(card instanceof HoleCard) {
             this.holeValues = handValues;
             this.holeCard = card;
         }
         
-        if (gerty != null && !(card instanceof HoleCard)) {
+        if (logan != null && !(card instanceof HoleCard)) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    gerty.deal(hid, card, handValues);
+                    logan.deal(hid, card, handValues);
                 }
             }).start();
         }
@@ -491,8 +485,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(sideBetView != null)
             sideBetView.ending(hid);
         
-        if(gerty != null)
-            gerty.bust(hid);
+        if(logan != null)
+            logan.bust(hid);
     }
 
     /**
@@ -517,8 +511,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(sideBetView != null)
             sideBetView.ending(hid);
         
-        if(gerty != null)
-            gerty.win(hid);
+        if(logan != null)
+            logan.win(hid);
     }
 
     /**
@@ -543,8 +537,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(sideBetView != null)
             sideBetView.ending(hid);
         
-        if(gerty != null)
-            gerty.lose(hid);
+        if(logan != null)
+            logan.lose(hid);
     }
 
     /**
@@ -569,8 +563,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(sideBetView != null)
             sideBetView.ending(hid);
         
-        if(gerty != null)
-            gerty.push(hid);
+        if(logan != null)
+            logan.push(hid);
     }
 
     /**
@@ -599,8 +593,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(sideBetView != null)
             sideBetView.ending(hid);
         
-        if(gerty != null)
-            gerty.blackjack(hid);
+        if(logan != null)
+            logan.blackjack(hid);
     }
 
     /**
@@ -627,8 +621,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(sideBetView != null)
             sideBetView.ending(hid);
         
-        if(gerty != null)
-            gerty.charlie(hid);
+        if(logan != null)
+            logan.charlie(hid);
     }
 
     /**
@@ -641,6 +635,14 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     @Override
     public void starting(List<Hid> hids, int shoeSize) {
         clear();
+        
+        if(shufflePending) {
+            SoundFactory.play(Effect.SHUFFLING);
+        
+            timeout(ABurnCard.TIMEOUT);
+            
+            shufflePending = false;
+        }
         
         numHands = hids.size();
 //        
@@ -670,8 +672,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             manos.put(hid, hand);
         }
         
-        if(gerty != null)
-            gerty.startGame(hids, shoeSize);
+        if(logan != null)
+            logan.startGame(hids, shoeSize);
     }
 
     /**
@@ -692,7 +694,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         // Update the shoe size
         this.shoeSize = shoeSize;   
         
-        if (gerty == null) {
+        if (logan == null) {
             // Enable betting and dealing again
             frame.enableDeal(true);
             this.bettable = true;
@@ -701,20 +703,17 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             frame.enablePlay(false);
         }
         else {
-            // Run gerty in worker thread in event there's a need for
+            // Run logan in worker thread in event there's a need for
             // endGame to wait between games.
             new Thread(new Runnable() { 
                 @Override
                 public void run() {
-                    try {
-                        gerty.endGame(shoeSize);
-                        
-                        Thread.sleep(2000);
-                        
-                        gerty.go();
-                    } catch (InterruptedException ex) {
-                        
-                    }
+                    logan.endGame(shoeSize);
+
+                    timeout(2);
+
+                    logan.go();
+
                 }
             }).start();
 
@@ -736,10 +735,11 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     public void shuffling() {
         burnCard.launch();
         
-        SoundFactory.play(Effect.SHUFFLING);
+        shufflePending = true;
         
-        if(gerty != null)
-            gerty.shuffling();
+        // Let bot know we're shuffling after this game.
+        if (shufflePending && logan != null)
+            logan.shuffling();
     }
 
     @Override
@@ -753,7 +753,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        if(gerty != null)
+        if(logan != null)
             return;
         
         if (!bettable)
@@ -780,7 +780,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(gerty != null)
+        if(logan != null)
             return;
         
         monies.get(Seat.YOU).unclick();
@@ -804,24 +804,24 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     }
     
     /**
-     * Tests whether the gerty has been installed.
+     * Tests whether the logan has been installed.
      * @return 
      */
     public boolean autopilotEngaged() {
-        return gerty != null;
+        return logan != null;
     }
     
     /**
-     * Starts the gerty.
+     * Starts the logan.
      */
     public void startAutopilot() {
-        this.gerty.setMoneyManager(this.monies.get(Seat.YOU));
-        this.gerty.setCourier(courier);       
-        if (gerty != null) {
+        this.logan.setMoneyManager(this.monies.get(Seat.YOU));
+        this.logan.setCourier(courier);       
+        if (logan != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    gerty.go();
+                    logan.go();
                 }
             }).start();
         }
@@ -870,11 +870,11 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     }
     
     /**
-     * Loads the gerty based on the property file setting.
+     * Loads the logan based on the property file setting.
      */
     protected void loadAutoPilot() {
         try {
-            String className = props.getProperty(Constant.PROPERTY_GERTY);
+            String className = props.getProperty(Constant.PROPERTY_LOGAN);
             
             if (className == null)
                 return;
@@ -883,11 +883,24 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             
             clazz = Class.forName(className);
             
-            this.gerty = (IGerty) clazz.newInstance();
+            this.logan = (ILogan) clazz.newInstance();
                         
             LOG.info("successfully loaded autopilot");
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             LOG.error("failed to load autopilog: "+ex);
         }
-    }    
+    }   
+    
+    /**
+     * Pauses for a time.
+     * @param seconds Pause time
+     */
+    protected void timeout(double seconds) {
+        try {
+            Thread.sleep((long) (seconds * 1000));
+        }
+        catch(Exception e) {
+            
+        }
+    }
 }

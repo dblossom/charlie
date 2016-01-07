@@ -73,6 +73,7 @@ public class Dealer implements Serializable {
     protected Hand dealerHand;
     protected HoleCard holeCard;
     protected boolean gameOver = false;
+    protected boolean shufflePending = false;
     
     /**
      * Constructor
@@ -202,23 +203,49 @@ public class Dealer implements Serializable {
     }
     
     /**
-     * Shuffles the shoe, if necessary.
+     * Deals a card.
+     * @return a card
      */
-    protected void shuffle()  {
-        if (shoe.shuffleNeeded()) {
-            try {
-                shoe.shuffle();
-                
-                for (IPlayer player : playerSequence) {
-                    player.shuffling();
-                }
-                
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                
-            }
-        }   
+    protected Card deal() {
+        Card card = shoe.next();
+        
+        checkDeck();
+        
+        return card;
     }
+    
+    /**
+     * Check deck for re-shuffle.
+     */
+    protected void checkDeck() {
+        // If shuffle needed and one not already pending
+        if(!shufflePending && shoe.shuffleNeeded()) {
+            shufflePending = true;
+            
+            for (IPlayer player : playerSequence) {
+                player.shuffling();
+            }
+        }
+    }
+    
+//    /**
+//     * Shuffles the shoe, if necessary.
+//     */
+//    protected void shuffle()  {
+//        if (shoe.shuffleNeeded()) {
+//            try {
+//                shoe.shuffle();
+//                
+//                for (IPlayer player : playerSequence) {
+//                    player.shuffling();
+//                }
+//                
+//                Thread.sleep(3000);
+//            } catch (InterruptedException ex) {
+//                
+//            }
+//        }   
+//    }
     
     /**
      * Starts the game.
@@ -246,14 +273,16 @@ public class Dealer implements Serializable {
             for(IPlayer player: playerSequence)              
                 player.startGame(hids,shoe.size());
             
-            shuffle();
+//            shuffle();
             
             Thread.sleep(250);
             
             // First round card to every one
             round(hids);
             
-            holeCard = new HoleCard(shoe.next());
+            Card card = deal();
+            
+            holeCard = new HoleCard(card);
             dealerHand.hit(holeCard);  
             
             Thread.sleep(Constant.DEAL_DELAY);
@@ -267,7 +296,7 @@ public class Dealer implements Serializable {
             // Second round card to everyone
             round(hids);
             
-            Card upCard = shoe.next();
+            Card upCard = deal();
             dealerHand.hit(upCard);
             
             Thread.sleep(Constant.DEAL_DELAY);
@@ -313,7 +342,7 @@ public class Dealer implements Serializable {
                     continue;
                
                 // Get a card from the shoe
-                Card card = shoe.next();
+                Card card = deal();
                 
                 // Deal this card
                 LOG.info("dealing to "+player+" card 1 = "+card); 
@@ -361,7 +390,7 @@ public class Dealer implements Serializable {
         }
         
         // Deal a card
-        Card card = shoe.next();
+        Card card = deal();
         
         hand.hit(card);
         LOG.info("hit hid = "+hid+" with "+card);
@@ -435,7 +464,7 @@ public class Dealer implements Serializable {
         // Dealer must double bet since one in hid is a copy -- not dealers
         hand.dubble();
        
-        Card card = shoe.next();
+        Card card = deal();
         
         // Double the bet and hit the hand once
         hand.hit(card);
@@ -510,7 +539,7 @@ public class Dealer implements Serializable {
         if (handsStanding() && !dealerHand.isBlackjack()) {
             // Draw until we reach (any) 17 or we break
             while (dealerHand.getValue() < 17) {
-                Card card = shoe.next();
+                Card card = deal();
                 
                 try {
                     Thread.sleep(Constant.DEAL_DELAY);
@@ -569,9 +598,14 @@ public class Dealer implements Serializable {
     /**
      * Tells everyone game over.
      */
-    protected void wrapUp() {
+    protected void wrapUp() { 
+        if(shufflePending) {
+            shoe.shuffle();
+            shufflePending = false;
+        }
+        
         for (IPlayer player: playerSequence)           
-            player.endGame(shoe.size());      
+            player.endGame(shoe.size()); 
     }
     
     /**

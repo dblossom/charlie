@@ -33,8 +33,15 @@ import javax.swing.ImageIcon;
  * @author Ron Coleman
  */
 public final class ABurnCard extends ACard {
+    protected long startTime;
+    protected long endTime;
+    protected boolean inMotion = false;
+    public final static double TIMEOUT = 2.5;
+    
     public ABurnCard() {
         super(ABurnCard.getBurnImage(),new Point(0,0),new Point(0,0));
+        
+        inMotion = false;
         
         clear();
     }
@@ -60,9 +67,12 @@ public final class ABurnCard extends ACard {
      */
     public void launch() {
         this.home = new Point(375,150);
+        
         this.x = Constant.SHOE_X;
         this.y = Constant.SHOE_Y;
-       
+        
+        startTime = System.currentTimeMillis();
+        inMotion = false;
     }
     
     /**
@@ -99,5 +109,22 @@ public final class ABurnCard extends ACard {
         }
         
         return img;
-    }    
+    }   
+    
+    @Override
+    public void update() {
+        super.update();
+        
+        if(!isVisible()) {
+            inMotion = false;
+            return;
+        }
+        
+        long now = System.currentTimeMillis();
+        
+        if((now - startTime) > TIMEOUT*1000 && !inMotion) {
+            clear();
+            inMotion = true;
+        }
+    }
 }
