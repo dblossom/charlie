@@ -32,11 +32,7 @@ import javax.swing.ImageIcon;
  * This class implements the "burn" card.
  * @author Ron Coleman
  */
-public final class ABurnCard extends ACard {
-    protected long startTime;
-    protected long endTime;
-    protected boolean inMotion = false;
-    
+public final class ABurnCard extends ACard { 
     /**
      * Constructor
      */
@@ -107,21 +103,4 @@ public final class ABurnCard extends ACard {
         
         return img;
     }   
-    
-//    @Override
-//    public void update() {
-//        super.update();
-//        
-//        if(!isVisible()) {
-//            inMotion = false;
-//            return;
-//        }
-//        
-//        long now = System.currentTimeMillis();
-//        
-//        if((now - startTime) > TIMEOUT*1000 && !inMotion) {
-//            clear();
-//            inMotion = true;
-//        }
-//    }
 }

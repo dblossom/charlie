@@ -85,13 +85,17 @@ public class SoundFactory {
         sound.setVolume(6.0f);
     }
     
+    /**
+     * Enable sounds to be played.
+     * @param state True if sounds are enabled.
+     */
     public static void enable(boolean state) {
         enabled = state;
     }
     
     /**
      * Plays a sound
-     * @param e Effect
+     * @param e Effect Effect to play
      */
     public static void play(Effect e) {
         if(!enabled)

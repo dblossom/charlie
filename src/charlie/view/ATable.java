@@ -175,8 +175,9 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
 
     /**
      * Gets the main upBet amount on the table.<br>
- This should only be requested when making a upBet but before the table
- has been clearBeted
+     * This should only be requested when making a upBet but before the table
+     * has been clearBeted
+     *
      * @return Bet amount
      */
     public Integer getBetAmt() {
@@ -287,7 +288,6 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         
         if(logan != null)
             logan.update();
-       
     }
 
     /**
@@ -626,24 +626,15 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     }
 
     /**
-     * Starts a game. Note: we received the initial player bankroll during login
+     * Starts a game.
+     * Note: we received the initial player bankroll during login
      * which is handled by GameFrame.
      *
      * @param shoeSize Shoe size
-     * @param hids Hand ids
+     * @param hids Hand ids in this game
      */
     @Override
-    public void starting(List<Hid> hids, int shoeSize) {
-        clear();
-        
-        if(shufflePending) {
-            SoundFactory.play(Effect.SHUFFLING);
-        
-            burnCard.clear();
-            
-            shufflePending = false;
-        }
-        
+    public void starting(List<Hid> hids, int shoeSize) {       
         numHands = hids.size();
 
         this.shoeSize = shoeSize;
@@ -664,7 +655,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
 
             animator.add(hand);
 
-            // Put the hand in its mano cache for quick look up later
+            // Put the hand in cache for quick look up later
             manos.put(hid, hand);
         }
         
@@ -725,7 +716,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     }
 
     /**
-     * Handles shuffling from dealer.
+     * Let's us know dealer shuffling deck after this game ends but before
+     * the next game starts.
      */
     @Override
     public void shuffling() {
@@ -733,8 +725,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         
         shufflePending = true;
         
-        // Let bot know we're shuffling after this game.
-        if (shufflePending && logan != null)
+        if (logan != null)
             logan.shuffling();
     }
 
@@ -885,7 +876,24 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             LOG.error("failed to load autopilog: "+ex);
         }
-    }   
+    } 
+    
+    /**
+     * Does shuffle, if needed.
+     * Note: shuffling method only says a shuffle is on the way. This shuffle
+     * says to shuffle, if a shuffle is pending.
+     */
+    public void shuffle() {    
+        if(shufflePending) {
+            burnCard.clear();
+            
+            SoundFactory.play(Effect.SHUFFLING);
+
+            shufflePending = false;
+            
+            timeout(3.0);
+        }
+    }
     
     /**
      * Pauses for a time.

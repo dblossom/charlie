@@ -76,7 +76,7 @@ public class GameFrame extends javax.swing.JFrame {
     protected final Integer HOUSE_PORT = 1234;
     protected Actor house;
     protected Courier courier;
-    protected ATable panel;
+    protected ATable table;
     protected boolean connected = false;
     protected final String COURIER_ACTOR = "COURIER";
     protected final String ADVISOR_PROPERTY = "charlie.advisor";
@@ -110,9 +110,9 @@ public class GameFrame extends javax.swing.JFrame {
      * Initializes the frame.
      */
     protected final void init() {
-        panel = new ATable(this, this.surface);
+        table = new ATable(this, this.surface);
 
-        surface.add(panel);
+        surface.add(table);
 
         this.setLocationRelativeTo(null);
 
@@ -172,9 +172,9 @@ public class GameFrame extends javax.swing.JFrame {
     }
     
     /**
-     * Confirm play with advisor
-     * @param hid
-     * @param play
+     * Confirm play with advisor.
+     * @param hid Hand id for our hand
+     * @param play Play we're making
      * @return True if advising, false otherwise
      */
     protected boolean confirmed(Hid hid,Play play) {
@@ -315,7 +315,7 @@ public class GameFrame extends javax.swing.JFrame {
     public void enableDeal(boolean state) {
         this.dealButton.setEnabled(state);
 
-        this.panel.enableBetting(state);
+        this.table.enableBetting(state);
 
         this.hitButton.setEnabled(false);
 
@@ -492,8 +492,8 @@ public class GameFrame extends javax.swing.JFrame {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    connected = frame.connect(panel);
-
+                    connected = frame.connect(table);
+                    
                     if (connected) {
                         // Prime the audio player
                         SoundFactory.prime();
@@ -505,8 +505,8 @@ public class GameFrame extends javax.swing.JFrame {
 
                         frame.accessButton.setText("Logout");
                         
-                        if (panel.autopilotEngaged()) {
-                            panel.startAutopilot();
+                        if (table.autopilotEngaged()) {
+                            table.startAutopilot();
 
                             frame.flyingOnManual = false;
                         }
@@ -532,10 +532,11 @@ public class GameFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_accessButtonActionPerformed
 
     /**
-     * Handles case where player presses deal button.
+     * Player presses deal button.
      * @param evt Button press event.
      */
     private void dealButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dealButtonActionPerformed
+        // Clear hands
         hids.clear();
         
         hands.clear();
@@ -545,13 +546,17 @@ public class GameFrame extends javax.swing.JFrame {
         this.dubblable = true;
 
         final GameFrame frame = this;
-        SwingUtilities.invokeLater(new Runnable() {
+//        SwingUtilities.invokeLater(new Runnable() {
+        new Thread(new Runnable() {
             @Override
-            public void run() {
-                // Clear out old bets, stats, etc.
-                frame.panel.clear();
+            public void run() {               
+                // Clear the table and shuffle the cards.
+                frame.table.clear();
                 
-                Integer amt = frame.panel.getBetAmt();
+                frame.table.shuffle();
+                
+                // Get new bet
+                Integer amt = table.getBetAmt();
 
                 if (amt <= 0) {
                     JOptionPane.showMessageDialog(frame,
@@ -562,10 +567,9 @@ public class GameFrame extends javax.swing.JFrame {
                 }
                 
                 // Get player side wager on table
-                Integer sideAmt = frame.panel.getSideAmt();
+                Integer sideAmt = table.getSideAmt();
 
-                // Tell courier to send bet to dealer which gives us a myHand id
-                // since bets are only associated with hands
+                // Send bets to dealer which starts the game.
                 Hid hid = courier.bet(amt, sideAmt);
 
                 hids.add(hid);
@@ -574,7 +578,7 @@ public class GameFrame extends javax.swing.JFrame {
 
                 enableDeal(false);
             }
-        });
+        }).start();
 
     }//GEN-LAST:event_dealButtonActionPerformed
     
@@ -658,8 +662,8 @@ public class GameFrame extends javax.swing.JFrame {
                 // Send this off to the dealer
                 courier.dubble(hid);
 
-                // Double the bet on the panel
-                panel.dubble(hid);
+                // Double the bet on the table
+                table.dubble(hid);
             }
         });
     }//GEN-LAST:event_ddownButtonActionPerformed
