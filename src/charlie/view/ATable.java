@@ -639,16 +639,12 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         if(shufflePending) {
             SoundFactory.play(Effect.SHUFFLING);
         
-            timeout(ABurnCard.TIMEOUT);
+            burnCard.clear();
             
             shufflePending = false;
         }
         
         numHands = hids.size();
-//        
-//        for (AHandsManager animator : seats.values()) {
-//            animator.clear();
-//        }
 
         this.shoeSize = shoeSize;
 
