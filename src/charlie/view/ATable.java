@@ -38,7 +38,7 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 import charlie.util.Point;
 import charlie.dealer.Seat;
-import charlie.plugin.ILogan;
+import charlie.plugin.ILogan5;
 import charlie.plugin.ISideBetView;
 import charlie.util.Constant;
 import java.awt.Image;
@@ -63,8 +63,8 @@ import org.slf4j.LoggerFactory;
 public final class ATable extends JPanel implements Runnable, IUi, MouseListener {
     private final Logger LOG = LoggerFactory.getLogger(ATable.class);
     protected Random ran = new Random();
-    protected String[] b9s = {"Apollo", "Zeus", "Talos"};
-    protected String[] n6s = {"Hera", "Athena", "Hecate"};
+    protected String[] b9s = {"Hewey"};
+    protected String[] n6s = {"Dewey"};
     protected AHandsManager you = new AHandsManager("You", new Point(225, 225));
     protected AHandsManager dealer = new AHandsManager("Dealer", new Point(225, 0));
     protected AHandsManager b9 = new AHandsManager(b9s[ran.nextInt(b9s.length)], new Point(450, 150));
@@ -107,7 +107,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     protected int winnerCount;
     protected ISideBetView sideBetView;
     protected Properties props; 
-    protected ILogan logan;
+    protected ILogan5 logan;
     private Card holeCard;
     private int[] holeValues;
     protected Courier courier;
@@ -861,7 +861,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      */
     protected void loadAutoPilot() {
         try {
-            String className = props.getProperty(Constant.PROPERTY_LOGAN);
+            String className = props.getProperty(Constant.PROPERTY_LOGAN5);
             
             if (className == null)
                 return;
@@ -870,7 +870,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             
             clazz = Class.forName(className);
             
-            this.logan = (ILogan) clazz.newInstance();
+            this.logan = (ILogan5) clazz.newInstance();
                         
             LOG.info("successfully loaded autopilot");
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
