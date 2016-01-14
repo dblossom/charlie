@@ -91,7 +91,7 @@ public class GameFrame extends javax.swing.JFrame {
     protected IAdvisor advisor;
     protected Hand dealerHand;
     private Properties props;
-    protected boolean flyingOnManual = true;
+    protected boolean manuallyControlled = true;
 
     /**
      * Constructor
@@ -331,11 +331,11 @@ public class GameFrame extends javax.swing.JFrame {
      * @param state State
      */
     public void enablePlay(boolean state) {
-        this.hitButton.setEnabled(state && trucking && flyingOnManual);
+        this.hitButton.setEnabled(state && trucking && manuallyControlled);
 
-        this.stayButton.setEnabled(state && trucking && flyingOnManual);
+        this.stayButton.setEnabled(state && trucking && manuallyControlled);
 
-        this.ddownButton.setEnabled(state && dubblable && trucking && flyingOnManual);
+        this.ddownButton.setEnabled(state && dubblable && trucking && manuallyControlled);
     }
 
     /**
@@ -486,6 +486,8 @@ public class GameFrame extends javax.swing.JFrame {
      */
     private void accessButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accessButtonActionPerformed
         final GameFrame frame = this;
+        
+        // If we're not connected to server, try to connect.
         if (!connected) {
             frame.accessButton.setEnabled(false);
             
@@ -508,13 +510,13 @@ public class GameFrame extends javax.swing.JFrame {
                         if (table.autopilotEngaged()) {
                             table.startAutopilot();
 
-                            frame.flyingOnManual = false;
+                            frame.manuallyControlled = false;
                         }
                         
-                        frame.enableDeal(flyingOnManual);
+                        frame.enableDeal(manuallyControlled);
                         
                         if(advisor != null)
-                            frame.adviseCheckBox.setEnabled(flyingOnManual);
+                            frame.adviseCheckBox.setEnabled(manuallyControlled);
                         
                     } else {
                         JOptionPane.showMessageDialog(frame,
@@ -527,8 +529,26 @@ public class GameFrame extends javax.swing.JFrame {
                 }
             });
         } else {
-            System.exit(0);
+            // If we're connected, check before quitting in case this is an accident.
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    Object[] options = { "YES", "Cancel" };
+                    int n = JOptionPane.showOptionDialog(frame,
+                            "Sure you want to quit game?",
+                            "Confirm",
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            options,
+                            options[1]);
+                    
+                    if(n == 0)
+                        System.exit(0);
+                }
+            });
         }
+
     }//GEN-LAST:event_accessButtonActionPerformed
 
     /**
