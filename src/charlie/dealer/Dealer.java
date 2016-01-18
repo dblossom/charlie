@@ -112,12 +112,12 @@ public class Dealer implements Serializable {
         reset();
 
         // Insert the player -- IN THIS ORDER
-        // B9 Robby
-        spawnBot("hewey",Seat.RIGHT);
+        // Huey
+        spawnBot("huey",Seat.RIGHT);
         
         sitPlayer(you,hid);
         
-        // Nexus 6 Rachel
+        // Dewey
         spawnBot("dewey",Seat.LEFT);
       
         // We'll start with this sequence number when playing hands
