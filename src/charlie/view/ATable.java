@@ -63,12 +63,12 @@ import org.slf4j.LoggerFactory;
 public final class ATable extends JPanel implements Runnable, IUi, MouseListener {
     private final Logger LOG = LoggerFactory.getLogger(ATable.class);
     protected Random ran = new Random();
-    protected String[] b9s = {"Hewey"};
-    protected String[] n6s = {"Dewey"};
+    protected String[] huey = {"Huey"};
+    protected String[] dewey = {"Dewey"};
     protected AHandsManager you = new AHandsManager("You", new Point(225, 225));
     protected AHandsManager dealer = new AHandsManager("Dealer", new Point(225, 0));
-    protected AHandsManager b9 = new AHandsManager(b9s[ran.nextInt(b9s.length)], new Point(450, 150));
-    protected AHandsManager n6 = new AHandsManager(n6s[ran.nextInt(n6s.length)], new Point(25, 150));
+    protected AHandsManager b9 = new AHandsManager(huey[ran.nextInt(huey.length)], new Point(450, 150));
+    protected AHandsManager n6 = new AHandsManager(dewey[ran.nextInt(dewey.length)], new Point(25, 150));
     protected AHandsManager[] handsManager = {you, dealer, b9, n6};
     protected TurnIndicator turnSprite = new TurnIndicator();
     protected AHand turn = null;
