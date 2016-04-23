@@ -88,12 +88,16 @@ public class Shoe  implements IShoe {
      * Shuffles cards in the shoe.
      */
     @Override
-    public final void shuffle() {
+    public void shuffle() {
         Collections.shuffle(cards,ran);
         
         index = 0;
                 
-        burnIndex = cards.size() - ran.nextInt(13) - 13;
+        int cutSize = Math.min(ran.nextInt(13) + 13, cards.size() / 3);
+        
+//        burnIndex = cards.size() - ran.nextInt(13) - 13;
+        burnIndex = cards.size() - cutSize;
+        
         LOG.info("shuffling burn index = "+burnIndex);
     }
     

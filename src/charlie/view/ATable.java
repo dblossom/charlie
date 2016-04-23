@@ -697,10 +697,16 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
                 public void run() {
                     logan.endGame(shoeSize);
 
-                    timeout(2);
+                    timeout(2.5);
 
+                    // Clear the table
+                    clear();
+                    
+                    // Do shuffle processing
+                    shuffle();
+                    
+                    // Tell Logan it's time to place a new bet
                     logan.go();
-
                 }
             }).start();
 
