@@ -885,7 +885,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     } 
     
     /**
-     * Does shuffle, if needed.
+     * Do shuffle, if needed.
      * Note: shuffling method only says a shuffle is on the way. This shuffle
      * says to shuffle, if a shuffle is pending.
      */

@@ -39,6 +39,13 @@ public class Hand implements Serializable {
     
     /**
      * Constructor
+     */
+    public Hand() {
+        this(new Hid());
+    }
+    
+    /**
+     * Constructor
      * @param hid Use this hand id.
      */
     public Hand(Hid hid) {

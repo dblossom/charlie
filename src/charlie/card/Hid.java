@@ -23,6 +23,7 @@
 package charlie.card;
 
 import charlie.dealer.Seat;
+import charlie.util.Constant;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -38,13 +39,31 @@ import org.slf4j.LoggerFactory;
  * @author Ron Coleman
  */
 public class Hid implements Serializable {
-    private final org.slf4j.Logger LOG = LoggerFactory.getLogger(Hid.class);
-    private static Random ran = new Random(0);
-    private Long key;
-    private String host = "UNKNOWN";
-    private Seat seat;
+    private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(Hid.class);
+    private static Random ran = new Random();
+    private static String host = "UNKNOWN";
+    private Long key = Math.abs(ran.nextLong());
+    private Seat seat = Seat.YOU;
     protected double amt = 0.0;
     protected double sideAmt = 0.0;
+    
+    static {
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            
+            Hid.host = addr.getHostName();           
+        }
+        catch(UnknownHostException e) {
+            LOG.error(e.toString());
+        }        
+    }
+    
+    /**
+     * Constructor uses all defaults.
+     */
+    public Hid() {
+
+    }
     
     /**
      * Copy constructor
@@ -52,7 +71,6 @@ public class Hid implements Serializable {
      */
     public Hid(Hid hid) {
         this.key = hid.key;
-        this.host =  hid.host;
         this.seat = hid.seat;
         this.amt = hid.amt;
         this.sideAmt = hid.sideAmt;
@@ -63,20 +81,10 @@ public class Hid implements Serializable {
      * @param amt Main bet amount
      * @param sideAmt Side bet amount
      */
-    public Hid(Seat seat,double amt,double sideAmt) {
-        try {       
-            this.amt = amt;
-            this.sideAmt = sideAmt;
-            this.key = Math.abs(ran.nextLong());
-            this.seat = seat;
-            
-            InetAddress addr = InetAddress.getLocalHost();
-            
-            this.host = addr.getHostName();
-            
-        } catch (UnknownHostException ex) {
-            LOG.error(ex.toString());
-        }
+    public Hid(Seat seat, double amt, double sideAmt) {     
+        this.amt = amt;
+        this.sideAmt = sideAmt;
+        this.seat = seat;
     }
     
     /**
@@ -84,7 +92,7 @@ public class Hid implements Serializable {
      * @param seat Seat
      */
     public Hid(Seat seat) {
-        this(seat,0.0,0.0);
+        this(seat,Constant.MIN_BET,0.0);
     }
 
     /**

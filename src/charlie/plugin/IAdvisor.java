@@ -31,5 +31,11 @@ import charlie.card.Hand;
  * @author Ron Coleman
  */
 public interface IAdvisor {
-    public Play advise(Hand myHand,Card upCard);
+    /**
+     * Gets advice.
+     * @param myHand Player's (YOU) hand
+     * @param upCard Dealer's up-card
+     * @return A suggested play
+     */
+    public Play advise(Hand myHand, Card upCard);
 }

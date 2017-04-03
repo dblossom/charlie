@@ -43,7 +43,7 @@ public class Shoe  implements IShoe {
     protected List<Card> cards = new ArrayList<>();
     protected Integer index = 0;
     protected int burnIndex = Integer.MAX_VALUE;
-    protected Random ran;
+    protected Random ran = new Random(System.nanoTime());
     
     /**
      * Constructor
@@ -64,9 +64,7 @@ public class Shoe  implements IShoe {
      * Initializes the shoe.
      */
     @Override
-    public void init() {
-        ran = new Random(System.currentTimeMillis());
-        
+    public void init() {        
         load();
         
         shuffle();        
@@ -78,9 +76,11 @@ public class Shoe  implements IShoe {
     protected final void load() {
         cards.clear();
         for(int deckno=0; deckno < this.numDecks; deckno++) {
-            for(int rank=1; rank <= 13; rank++)
-                for(Suit suit: Suit.values())
+            for(int rank=1; rank <= 13; rank++) {
+                for(Suit suit: Suit.values()) {
                     cards.add(new Card(rank,suit));
+                }
+            }
         }        
     }
     
