@@ -573,8 +573,6 @@ public class GameFrame extends javax.swing.JFrame {
                 // Clear the table and shuffle the cards.
                 frame.table.clear();
                 
-                frame.table.shuffle();
-                
                 // Get new bet
                 Integer amt = table.getBetAmt();
 
@@ -586,6 +584,12 @@ public class GameFrame extends javax.swing.JFrame {
                     return;
                 }
                 
+                // Disable starting new game
+                enableDeal(false);
+                
+                // Shuffle the cards
+                frame.table.shuffle();
+
                 // Get player side wager on table
                 Integer sideAmt = table.getSideAmt();
 
@@ -595,8 +599,6 @@ public class GameFrame extends javax.swing.JFrame {
                 hids.add(hid);
                 
                 hands.put(hid, new Hand(hid));
-
-                enableDeal(false);
             }
         }).start();
 
