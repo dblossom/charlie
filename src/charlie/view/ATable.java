@@ -553,10 +553,6 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         AHand hand = manos.get(hid);
 
         hand.setOutcome(AHand.Outcome.Push);
-
-        AMoneyManager money = this.monies.get(hid.getSeat());
-        
-        money.increase(hid.getSideAmt());
         
         ++pushCount;
         
