@@ -38,7 +38,6 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 import charlie.util.Point;
 import charlie.dealer.Seat;
-import charlie.plugin.ILogan5;
 import charlie.plugin.ISideBetView;
 import charlie.util.Constant;
 import java.awt.Image;
@@ -54,6 +53,7 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import charlie.plugin.ILogan;
 
 /**
  * This class is the main table panel.
@@ -107,7 +107,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     protected int winnerCount;
     protected ISideBetView sideBetView;
     protected Properties props; 
-    protected ILogan5 logan;
+    protected ILogan logan;
     private Card holeCard;
     private int[] holeValues;
     protected Courier courier;
@@ -872,7 +872,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             
             clazz = Class.forName(className);
             
-            this.logan = (ILogan5) clazz.newInstance();
+            this.logan = (ILogan) clazz.newInstance();
                         
             LOG.info("successfully loaded autopilot");
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
