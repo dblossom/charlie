@@ -30,7 +30,7 @@ import java.awt.Graphics2D;
  * This interface defines the behavior of an AI player running on the client.
  * @author Ron Coleman
  */
-public interface ILogan5 extends IPlayer {
+public interface ILogan extends IPlayer {
     /**
      * Tells bot it's time to make a bet to start a game.
      */
