@@ -31,39 +31,49 @@ import java.util.Random;
  * @author Ron Coleman
  */
 public class SoundFactory {   
-    private final static Sound dealSound0 = new Sound("audio/PlayingCardsPo_eOnFelt01_87.wav");
-    private final static Sound dealSound1 = new Sound("audio/tap.wav");
-    private final static Sound dealSound2 = new Sound("audio/Telemet_33G_HD2-32076.wav");
-    private final static Sound[] charlieSounds = { 
+//    private final static Sound DEAL_SOUND0 = new Sound("audio/PlayingCardsPo_eOnFelt01_87.wav");
+    private final static Sound DEAL_SOUND1 = new Sound("audio/tap.wav");
+//    private final static Sound DEAL_SOUND2 = new Sound("audio/Telemet_33G_HD2-32076.wav");
+    private final static Sound[] CHARLIE_SOUNDS = { 
         new Sound("audio/shazam2.wav")
     };
-    private final static Sound[] bjSounds = { 
+    private final static Sound[] BJ_SOUNDS = { 
         new Sound("audio/you-can-do-it.wav"), 
         new Sound("audio/you-got-it-1.wav"),
-        new Sound("audio/wahoo.wav")
+        new Sound("audio/wahoo.wav"),
+//        new Sound("audio/mostimprs-2.wav")
     };
-    private final static Sound[] niceSounds = { 
+    private final static Sound[] NICE_SOUNDS = { 
         new Sound("audio/wow.wav"), 
         new Sound("audio/austin_yeahbaby_converted.wav"),
-        new Sound("audio/woow.wav")
+        new Sound("audio/woow.wav"),
+        new Sound("audio/goodshot-2.wav"),
+//        new Sound("audio/impressive-2.wav")
     };
-    private final static Sound[] toughSounds = {
+    private final static Sound[] OUCH_SOUNDS = {
         new Sound("audio/evil_laf.wav"), 
         new Sound("audio/aaaah.wav"), 
         new Sound("audio/bone_converted.wav"), 
         new Sound("audio/glass.wav"),
+        new Sound("audio/job-1.wav"),
+        new Sound("audio/better-1.wav"),
+        new Sound("audio/1doh.wav"),
+        new Sound("audio/ow2.wav"),
+        new Sound("audio/awwcrap.wav"),
+        new Sound("audio/good_grief.wav")
 //        new Sound("audio/vplaugh.wav")
     };
-    private final static Sound[] pushSounds ={ 
-        new Sound("audio/trap.wav") 
+    private final static Sound[] PUSH_SOUNDS ={ 
+        new Sound("audio/trap.wav") ,
+//        new Sound("audio/whatwsth.wav")
     };
-    private final static Sound[] bustSounds = { 
+    private final static Sound[] BREAK_SOUNDS = { 
         new Sound("audio/ouch.wav")
     };
-    private final static Sound chipsIn = new Sound("audio/Games_Poker_Chip_08950004.wav");
-    private final static Sound chipsOut = new Sound("audio/Games_Poker_Chip_08950003.wav");
-    private final static Sound shuffle = new Sound("audio/013012_Casino-Cards_28_A1.wav");
-    private final static Sound turn = new Sound("audio/Telemet_33G_HD2-32076.wav");
+    private final static Sound CHIPS_IN_SOUIND = new Sound("audio/Games_Poker_Chip_08950004.wav");
+    private final static Sound CHIPS_OUT_SOUND = new Sound("audio/Games_Poker_Chip_08950003.wav");
+    private final static Sound SHUFFLE_SOUND = new Sound("audio/013012_Casino-Cards_28_A1.wav");
+    private final static Sound TURN_SOUND = new Sound("audio/Telemet_33G_HD2-32076.wav");
     private static long lastTime = System.currentTimeMillis();   
     protected static Random toss = new Random();
     private static boolean enabled = true;
@@ -73,7 +83,7 @@ public class SoundFactory {
      */
     public static void prime() {
         // Get any sound
-        Sound sound = niceSounds[0];
+        Sound sound = NICE_SOUNDS[0];
         
         // Set volume to allowed minimum
         sound.setVolume(-80.0f);
@@ -103,37 +113,37 @@ public class SoundFactory {
         
         switch(e) {
             case TURN:
-                turn.play();
+                TURN_SOUND.play();
                 break;
             case SHUFFLING:
-                backgroundPlay(shuffle,2);
+                backgroundPlay(SHUFFLE_SOUND,2);
                 break;
             case DEAL:
-                backgroundPlay(dealSound1,1);
+                backgroundPlay(DEAL_SOUND1,1);
                 break;
             case CHARLIE:
-                charlieSounds[toss.nextInt(charlieSounds.length)].play();
+                CHARLIE_SOUNDS[toss.nextInt(CHARLIE_SOUNDS.length)].play();
                 break;
             case BJ:
-                bjSounds[toss.nextInt(bjSounds.length)].play();
+                BJ_SOUNDS[toss.nextInt(BJ_SOUNDS.length)].play();
                 break;
             case NICE:
-                niceSounds[toss.nextInt(niceSounds.length)].play();
+                NICE_SOUNDS[toss.nextInt(NICE_SOUNDS.length)].play();
                 break;
             case TOUGH:
-                toughSounds[toss.nextInt(toughSounds.length)].play();  
+                OUCH_SOUNDS[toss.nextInt(OUCH_SOUNDS.length)].play();  
                 break;
             case PUSH:
-                pushSounds[toss.nextInt(pushSounds.length)].play();
+                PUSH_SOUNDS[toss.nextInt(PUSH_SOUNDS.length)].play();
                 break;                
             case BUST:
-                bustSounds[toss.nextInt(bustSounds.length)].play();
+                BREAK_SOUNDS[toss.nextInt(BREAK_SOUNDS.length)].play();
                 break; 
             case CHIPS_IN:
-                backgroundPlay(chipsIn,1);
+                backgroundPlay(CHIPS_IN_SOUIND,1);
                 break;
             case CHIPS_OUT:
-                backgroundPlay(chipsOut,1);
+                backgroundPlay(CHIPS_OUT_SOUND,1);
                 break;                
         }        
     }
