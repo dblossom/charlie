@@ -60,7 +60,7 @@ public class SoundFactory {
         new Sound("audio/1doh.wav"),
         new Sound("audio/ow2.wav"),
         new Sound("audio/awwcrap.wav"),
-        new Sound("audio/good_grief.wav")
+//        new Sound("audio/good_grief.wav")
 //        new Sound("audio/vplaugh.wav")
     };
     private final static Sound[] PUSH_SOUNDS ={ 
