@@ -154,6 +154,15 @@ public class Hand implements Serializable {
     }
     
     /**
+     * A method that will split the hand
+     * 
+     * Just a place holder method for now.
+     */
+    public void split(){
+        // do nothing.
+    }
+    
+    /**
      * Revalues the hand.
      * This method uses all cards, including the hole hard. The method is
      * typically invoked when the dealer plays, that is, upon showing the
