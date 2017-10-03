@@ -486,6 +486,36 @@ public class Dealer implements Serializable {
     }
     
     /**
+     * Split how to handle hands when player splits
+     * 
+     *    Empty Shell for now
+     * 
+     * @param player player playing split
+     * @param hid players first Hid
+     */
+    public void split(IPlayer player, Hid hid){
+        
+        // Rules:
+        //     Do not split a split, maybe make a flag? "isSplit" ? Hand or HID?
+        //     One hand goes at a time
+        //     Add to the bet -- but a one time thing
+        
+        // we need to call the hand "split method"
+        // then we will have two hands to work with
+        // the new hand and the original hand
+        // each hand needs to go one at a time
+        // no need to "recreate" anything - use methods here
+        // for hit, stay, etc
+        
+        // handSeqIndex ?? add one to that? 
+        // handSequence -- put the "new" hand after the original hand
+        // but before any other players -- IE the left side bot
+        
+        
+        
+    }
+    
+    /**
      * Moves to the next hand at the table
      */
     protected void goNextHand() {

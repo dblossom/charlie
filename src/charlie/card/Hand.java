@@ -156,10 +156,30 @@ public class Hand implements Serializable {
     /**
      * A method that will split the hand
      * 
-     * Just a place holder method for now.
+     * @param hand: the hand with the pair to split
+     * @return the new hand
      */
-    public void split(){
-        // do nothing.
+    public Hand split(Hand hand){
+        
+        // Create the new hand with defaults
+        Hand newHand = new Hand();
+        
+        // The bet amnount needs to equal the original bet
+        // TODO: Make sure it's destroyed IE: not retained after this game.
+        newHand.hid.setAmt(hand.hid.getAmt());
+        
+        // WARNING::REMOVING THE UN-NEEDED CARD WHILE RETURNING IT.
+        Card card = hand.cards.remove(1);
+        
+        // Update "this" hand's values
+        values[Constant.HAND_LITERAL_VALUE] -= card.value();
+        values[Constant.HAND_SOFT_VALUE] -= card.value();
+        
+        // Give the new hand a card, the card we removed from this hand
+        newHand.hit(card);
+        
+        // return the new hand
+        return newHand;
     }
     
     /**
