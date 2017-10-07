@@ -497,6 +497,8 @@ public class Dealer implements Serializable {
         
         // Rules:
         //     Do not split a split, maybe make a flag? "isSplit" ? Hand or HID?
+        //         can also let the "UI" keep track by not allowing split button
+        //         to be enabled for that "player" who already split.
         //     One hand goes at a time
         //     Add to the bet -- but a one time thing
         
@@ -509,11 +511,38 @@ public class Dealer implements Serializable {
         
         // handSeqIndex ?? add one to that? 
         // handSequence -- put the "new" hand after the original hand
-        // but before any other players -- IE the left side bot
+        // but before any other players -- IE the left side bot (ArrayList.add(index, element)
         
+        // *****************************************************
+        // okay, some basic stuff...
+        // Validate the request
+        Hand origHand = validate(hid);
         
+        if(origHand == null) {
+            LOG.error("got invalid SPLIT player = "+player);
+            return;
+        }
+        
+        LOG.info("got split"); // = "+hid.getAmt()+" hid = "+hid);
+        
+        // Now we need the "other" hand.
+        Hand newHand = origHand.split();
+        
+        // Now that we have two hands we need to manipulate the handSeqIndex
+        int i = handSequence.indexOf(hid);
+        handSequence.add((i-1),newHand.getHid());
+        
+        // Now we want to Play the new hand.
+        this.hit(player, newHand.getHid());
+        
+        // Once we come back we want to play the other hand
+        this.hit(player, hid);
         
     }
+    
+    /**
+     * Splits helper function that "plays" the hand
+     */
     
     /**
      * Moves to the next hand at the table

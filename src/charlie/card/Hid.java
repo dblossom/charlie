@@ -47,6 +47,12 @@ public class Hid implements Serializable {
     protected double amt = 0.0;
     protected double sideAmt = 0.0;
     
+    // Added to indicate if the HID has been split or not.
+    // Do we want setters and getters?
+    // Maybe we want the GUI to keep track since there isn't a reason
+    // to NOT let splits of splits happen.
+    protected boolean beenSplit = false;
+    
     static {
         try {
             InetAddress addr = InetAddress.getLocalHost();
