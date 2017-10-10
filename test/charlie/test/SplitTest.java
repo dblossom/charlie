@@ -26,25 +26,6 @@ import static org.junit.Assert.*;
  * @author blossom
  */
 public class SplitTest {
-    
-    public SplitTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void test(){
@@ -93,7 +74,7 @@ public class SplitTest {
        
         IPlayer player = new RealPlayer(dealer, houseAddr);
         
-        dealer.split(player, hand.getHid());
+        //dealer.split(player, hand.getHid());
         
         System.out.println(hand.getCard(0));
         System.out.println(hand.getCard(1));

@@ -31,7 +31,6 @@ import charlie.card.Hand;
 import charlie.plugin.IPlayer;
 import charlie.message.view.from.DoubleDown;
 import charlie.message.view.from.Request;
-import charlie.message.view.from.Split;
 import charlie.message.view.from.Stay;
 import charlie.message.view.to.Blackjack;
 import charlie.message.view.to.Bust;
@@ -119,9 +118,6 @@ public class RealPlayer implements IPlayer {
         
         else if(request instanceof DoubleDown)
             dealer.doubleDown(this, hand);
-        
-        else if(request instanceof Split)
-            dealer.split(this, hand);
         
         else
             LOG.error("received unknown request: "+request+" for hand = "+hand);

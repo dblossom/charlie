@@ -152,34 +152,7 @@ public class Hand implements Serializable {
         if(card.isAce() && values[Constant.HAND_SOFT_VALUE]+10 <= 21)
             values[Constant.HAND_SOFT_VALUE] += 10;
     }
-    
-    /**
-     * A method that will split the hand
-     * 
-     * @return the new hand
-     */
-    public Hand split(){
         
-        // Create the new hand with defaults
-        // = new Hand(new Hid(Seat.YOU)); ?
-        Hand newHand = new Hand();
-        
-        // The bet amnount needs to equal the original bet
-        // TODO: Make sure it's destroyed IE: not retained after this game.
-        newHand.hid.setAmt(hid.getAmt());
-        
-        // WARNING::REMOVING THE UN-NEEDED CARD WHILE RETURNING IT.
-        Card card = cards.remove(1);
-        
-        // Update "this" hand's values
-        this.revalue();
-        // Give the new hand a card, the card we removed from this hand
-        newHand.hit(card);
-        
-        // return the new hand
-        return newHand;
-    }
-    
     /**
      * Revalues the hand.
      * This method uses all cards, including the hole hard. The method is
