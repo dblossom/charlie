@@ -389,6 +389,11 @@ public class Dealer implements Serializable {
             return;
         }
         
+        if(hand.isPair()){
+            this.split(player, hid);
+            return;
+        }
+        
         // Deal a card
         Card card = deal();
         
@@ -530,7 +535,7 @@ public class Dealer implements Serializable {
         
         // Now that we have two hands we need to manipulate the handSeqIndex
         int i = handSequence.indexOf(hid);
-        handSequence.add((i-1),newHand.getHid());
+        handSequence.add((i),newHand.getHid());
         
         // Now we want to Play the new hand.
         this.hit(player, newHand.getHid());

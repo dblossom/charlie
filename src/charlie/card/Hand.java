@@ -161,6 +161,7 @@ public class Hand implements Serializable {
     public Hand split(){
         
         // Create the new hand with defaults
+        // = new Hand(new Hid(Seat.YOU)); ?
         Hand newHand = new Hand();
         
         // The bet amnount needs to equal the original bet
@@ -171,9 +172,7 @@ public class Hand implements Serializable {
         Card card = cards.remove(1);
         
         // Update "this" hand's values
-        values[Constant.HAND_LITERAL_VALUE] -= card.value();
-        values[Constant.HAND_SOFT_VALUE] -= card.value();
-        
+        this.revalue();
         // Give the new hand a card, the card we removed from this hand
         newHand.hit(card);
         

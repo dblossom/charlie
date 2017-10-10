@@ -2,4 +2,4 @@ charlie.server.host 127.0.0.1
 charlie.server.topology.port 1234
 charlie.server.login.port 9000
 charlie.debug true
-charlie.shoe charlie.card.Shoe01
+charlie.shoe charlie.card.SplitShoe00
