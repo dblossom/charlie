@@ -25,53 +25,59 @@ public class SplitDealer extends Dealer {
     
     @Override
     public void hit(IPlayer player, Hid hid){
-        split(player,hid);
+        Hand hand = validate(hid);
+        
+        if(!hand.isPair()){
+            super.hit(player, hid);
+        }else
+            split(player,hid);
     }
 
     public void split(IPlayer player, Hid hid){
         
-        // Rules:
-        //     Do not split a split, maybe make a flag? "isSplit" ? Hand or HID?
-        //         can also let the "UI" keep track by not allowing split button
-        //         to be enabled for that "player" who already split.
-        //     One hand goes at a time
-        //     Add to the bet -- but a one time thing
-        
-        // we need to call the hand "split method"
-        // then we will have two hands to work with
-        // the new hand and the original hand
-        // each hand needs to go one at a time
-        // no need to "recreate" anything - use methods here
-        // for hit, stay, etc
-        
-        // handSeqIndex ?? add one to that? 
-        // handSequence -- put the "new" hand after the original hand
-        // but before any other players -- IE the left side bot (ArrayList.add(index, element)
-        
-        // *****************************************************
-        // okay, some basic stuff...
-        // Validate the request
+        // First we need to validate the request
         Hand origHand = validate(hid);
         
+        // Log any errors
         if(origHand == null) {
             LOG.error("got invalid SPLIT player = "+player);
             return;
         }
         
-        LOG.info("got split"); // = "+hid.getAmt()+" hid = "+hid);
+        // Log that we are doing a split action
+        // Guess we will log what cards we are splitting and the "new hand amount"
+        LOG.info("Player requested to split " 
+                + origHand.getCard(0).getName() 
+                + "'s."); // = "+hid.getAmt()+" hid = "+hid);
         
         // Now we need the "other" hand.
         Hand newHand = SplitHand.split(origHand);
         
+        // Add this hand to the dealers array of hands
+        hands.put(newHand.getHid(), newHand);
+        
+        // Add this hand to this player
+        players.put(newHand.getHid(), player);
+        
         // Now that we have two hands we need to manipulate the handSeqIndex
+        // Think it will be easier to add it AFTER the current hand since that
+        // hand is actually "in play" ... 
         int i = handSequence.indexOf(hid);
-        handSequence.add((i),newHand.getHid());
+        handSequence.add((i+1),newHand.getHid());
+        
+          //      player.play(newHand.getHid());
         
         // Now we want to Play the new hand.
-        hit(player, newHand.getHid());
+        // For testing, let's leave this but the end design
+        // will be a helper function to ensure only one hand
+        // is played at a time.
+        super.hit(player, hid);
+      //  super.stay(player, newHand.getHid());
         
         // Once we come back we want to play the other hand
-        hit(player, hid);
+       // super.hit(player, hid);
+      //  super.stay(player, hid);
+
         
     }
 }

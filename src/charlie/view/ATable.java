@@ -426,7 +426,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         SoundFactory.play(Effect.DEAL);
 
         AHand hand = manos.get(hid);
-
+ 
         hand.setValues(handValues);
 
         // If card is null, this is not a "real" hit but only

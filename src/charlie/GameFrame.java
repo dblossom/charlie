@@ -321,7 +321,7 @@ public class GameFrame extends javax.swing.JFrame {
 
         this.stayButton.setEnabled(false);
 
-        this.splitButton.setEnabled(false);
+        this.splitButton.setEnabled(true);
 
         this.ddownButton.setEnabled(false);
     }

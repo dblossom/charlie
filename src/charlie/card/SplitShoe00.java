@@ -23,10 +23,10 @@ public class SplitShoe00 extends Shoe{
         cards.add(new Card(6, Card.Suit.SPADES));
         
         // My first card for one of the split hands
-        cards.add(new Card(2, Card.Suit.SPADES));
+        cards.add(new Card(10, Card.Suit.SPADES));
         
         // My first card for the second hand
-        cards.add(new Card(2, Card.Suit.DIAMONDS));
+        cards.add(new Card(4, Card.Suit.DIAMONDS));
         
         // dealers bust card
         cards.add(new Card(6, Card.Suit.HEARTS));
