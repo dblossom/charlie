@@ -92,6 +92,13 @@ public class GameFrame extends javax.swing.JFrame {
     protected Hand dealerHand;
     private Properties props;
     protected boolean manuallyControlled = true;
+    
+    /**
+     * Is a hand "splitable
+     * @author Dan Blossom
+     * @date 10/2017
+     */
+    protected boolean splitable = false;
 
     /**
      * Constructor
@@ -306,6 +313,13 @@ public class GameFrame extends javax.swing.JFrame {
         }
             
         hand.hit(card);
+        
+        // For now, it will enable the split button
+        // Only call if it's our hand
+        // Do not like this here 
+        if(hid.getSeat() == Seat.YOU){
+            this.enableSplitButton(hid);
+        }
     }
 
     /**
@@ -321,7 +335,7 @@ public class GameFrame extends javax.swing.JFrame {
 
         this.stayButton.setEnabled(false);
 
-        this.splitButton.setEnabled(true);
+        this.splitButton.setEnabled(false);
 
         this.ddownButton.setEnabled(false);
     }
@@ -336,6 +350,8 @@ public class GameFrame extends javax.swing.JFrame {
         this.stayButton.setEnabled(state && trucking && manuallyControlled);
 
         this.ddownButton.setEnabled(state && dubblable && trucking && manuallyControlled);
+        
+        this.splitButton.setEnabled(state && splitable && trucking && manuallyControlled);
     }
 
     /**
@@ -428,6 +444,11 @@ public class GameFrame extends javax.swing.JFrame {
         });
 
         splitButton.setText("Split");
+        splitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                splitButtonActionPerformed(evt);
+            }
+        });
 
         adviseCheckBox.setText("Advise");
         adviseCheckBox.setEnabled(false);
@@ -697,7 +718,56 @@ public class GameFrame extends javax.swing.JFrame {
     private void adviseCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adviseCheckBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_adviseCheckBoxActionPerformed
+    /**
+     * Handles case where player presses split button
+     * added 10/20/2017
+     * @author Dan Blossom
+     * @param evt split button press event
+     */
+    private void splitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_splitButtonActionPerformed
 
+        final GameFrame frame = this;
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+
+                // no more splits this go.
+                // also have to figure out a way to block splits if player gets another pair.
+                splitButton.setEnabled(false);
+
+                // get active hand
+                Hid hid = hids.get(frame.handIndex);
+                
+                // Need to inc this so the frame gives the 'next' hid
+                // to the dealer after the first hand is complete.
+                frame.handIndex++;
+
+                // tell the dealer we requested a split and provide an HID
+                courier.split(hid);
+            }
+        });
+    }//GEN-LAST:event_splitButtonActionPerformed
+
+    /**
+     * A helper function to determine if a hand can be split
+     * @param hid
+     */
+    public void enableSplitButton(Hid hid){
+        
+        if(hid.getSeat() != Seat.YOU){
+            this.splitable = false;
+            return;
+        }
+        
+        Hand hand = hands.get(hid);
+        
+        this.splitable = hand.isPair();
+    }
+    
+    public void addSplitHid(Hid hid){
+        this.hids.add(hid);
+    }
+    
     /**
      * Main starting point of app.
      * @param args the command line arguments

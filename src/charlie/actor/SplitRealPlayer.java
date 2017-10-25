@@ -1,12 +1,13 @@
 package charlie.actor;
 
+import charlie.card.Hand;
 import charlie.card.Hid;
 import charlie.dealer.SplitDealer;
-import charlie.message.view.from.DoubleDown;
-import charlie.message.view.from.Hit;
-import charlie.message.view.from.Request;
-import charlie.message.view.from.Split;
-import charlie.message.view.from.Stay;
+import charlie.message.view.from.SplitFromView;
+import charlie.message.view.to.SplitToView;
+//import charlie.message.view.to.Split;
+
+import charlie.plugin.IPlayer;
 import com.googlecode.actorom.Address;
 import com.googlecode.actorom.annotation.OnMessage;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author blossom
  */
-public class SplitRealPlayer extends RealPlayer{
+public class SplitRealPlayer extends RealPlayer implements IPlayer{
     
     private final SplitDealer splitDealer;
     private final Logger LOG = LoggerFactory.getLogger(SplitRealPlayer.class);
@@ -28,30 +29,23 @@ public class SplitRealPlayer extends RealPlayer{
     }
     
     /**
-     * Receives a request from the courier.
-     * @param request Request
+     * Sends the split request back to the ATable
+     * @param newHid the HID for the newly created hand
+     * @param hid the HID for the hand that was just split
      */
-    @OnMessage(type = Request.class)
     @Override
-    public void onReceive(Request request) {
-        LOG.info("received request = "+request);
-        Hid hand = request.getHid();
-        
-        if(request instanceof Hit)
-            dealer.hit(this, hand);
-        
-        else if(request instanceof Stay)
-            dealer.stay(this, hand);
-        
-        else if(request instanceof DoubleDown)
-            dealer.doubleDown(this, hand);
-        
-        else if(request instanceof Split)
-            splitDealer.split(this, hand);
-        
-        else
-            LOG.error("received unknown request: "+request+" for hand = "+hand);
+    public void split(Hid newHid, Hid hid){
+        courier.send(new SplitToView(newHid, hid));
     }
-
     
+    /**
+     * Receives a request from the courier that player split
+     * @param split split Request
+     */
+    @OnMessage(type = SplitFromView.class)
+    public void onReceive(SplitFromView split) {
+        LOG.info("received split notification from player = "+split);
+                
+        splitDealer.split(this, split.getHid());
+    }   
 }

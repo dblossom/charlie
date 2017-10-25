@@ -31,6 +31,7 @@ import charlie.dealer.Seat;
 import charlie.message.view.from.Bet;
 import charlie.message.view.from.DoubleDown;
 import charlie.message.view.from.Hit;
+import charlie.message.view.from.SplitFromView;
 import charlie.message.view.from.Stay;
 import charlie.message.view.to.Blackjack;
 import charlie.message.view.to.Bust;
@@ -43,6 +44,7 @@ import charlie.message.view.to.Play;
 import charlie.message.view.to.Push;
 import charlie.message.view.to.GameStart;
 import charlie.message.view.to.Shuffle;
+import charlie.message.view.to.SplitToView;
 import charlie.message.view.to.Win;
 import charlie.util.Constant;
 import com.googlecode.actorom.Actor;
@@ -112,6 +114,25 @@ public class Courier {
         player.send(new Bet(hid));
         
         return hid;
+    }
+    
+    /**
+     * Sends the split request to the dealer.
+     * The HID is created in the game frame after player pressed "split"
+     * @param hid The hand ID we are going to split (original hand)
+     */
+    public void split(Hid hid){
+        player.send(new SplitFromView(hid));
+    }
+    
+    /**
+     * Receives a split notification from the dealer with the new HID
+     * @param split
+     */
+    @OnMessage(type = SplitToView.class)
+    public void onReceive(SplitToView split){
+        LOG.info("received split outcome from dealer");
+        ui.split(split.getNewHid(), split.getOrigHid());
     }
     
     /**
@@ -205,6 +226,7 @@ public class Courier {
         LOG.info("got trun = "+turn.getHid());
         
         ui.turn(turn.getHid());
+
     }
     
     /**

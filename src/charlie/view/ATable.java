@@ -386,7 +386,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
 
             // Enable new hand
             turn = hand;
-
+            
             turn.enablePlaying(true);
 
             // If turn is NOT my hand, disable my hand
@@ -907,6 +907,57 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         }
         catch(Exception e) {
             
+        }
+    }
+
+    /**
+     * Gets invoked by Courier that dealer has ack split request
+     * @param newHid
+     * @param origHid 
+     */
+    @Override
+    public void split(Hid newHid, Hid origHid) {
+        
+        // Let us get our 'hand' on the original hand
+        AHand hand = manos.get(origHid);
+        
+        ACard card = hand.cards.remove(1);
+        
+        int[] newHandValues = setHandValues(hand);
+        
+        hand.setValues(newHandValues);
+
+        AHand newHand = new AHand(newHid);
+        newHand.hit(card);
+        newHand.setValues(newHandValues);
+        
+        manos.put(newHid, newHand);
+        
+        this.frame.addSplitHid(newHid);
+        
+    }
+    
+    /**
+     * Helper function to update an AHands value
+     * Typically should only be called during split action
+     * @param hand hand to revalue
+     * @return hard/soft values.
+     */
+    private int[] setHandValues(AHand hand){
+
+        int[] value = new int[2];
+        
+        // assuming hard/soft value locations do not change
+        // an incoming pair of aces should look like this
+        // which we will split to 1 & 11, all other pairs 
+        // can be div by 2 to update the value
+        if(hand.values[0] == 2 && hand.values[1] == 12){
+            value[0] = 1;
+            value[1] = 11;
+            return value;
+        }else{
+            value[0] = value[1] = hand.values[0] / 2;
+            return value;
         }
     }
 }

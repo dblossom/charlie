@@ -248,4 +248,15 @@ public class RealPlayer implements IPlayer {
     public String toString() {
         return this.myAddress + " -> " + courier.getAddress();
     }
+
+    /**
+     * The below methods were added to IPlayer and are actually implemented in
+     * SplitRealPlayer. Doing this breaks IBot and other code since these will
+     * not be implemented. This is fine for now
+     */
+
+    @Override
+    public void split(Hid newHid, Hid origHid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

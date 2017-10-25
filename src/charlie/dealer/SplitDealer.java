@@ -22,20 +22,10 @@ public class SplitDealer extends Dealer {
     public SplitDealer(House house){
         super(house);
     }
-    
-    @Override
-    public void hit(IPlayer player, Hid hid){
-        Hand hand = validate(hid);
-        
-        if(!hand.isPair()){
-            super.hit(player, hid);
-        }else
-            split(player,hid);
-    }
 
     public void split(IPlayer player, Hid hid){
         
-        // First we need to validate the request
+        // First we need to validate original hand
         Hand origHand = validate(hid);
         
         // Log any errors
@@ -44,18 +34,20 @@ public class SplitDealer extends Dealer {
             return;
         }
         
+        // Create a new Hand ID from original.
+        // Same seat, same bet amount, but no sidebet as player
+        // does side bet and did or did not already.
+        Hid newHid = new Hid(hid.getSeat(), hid.getAmt(), 0);
+        
+        // Let us split the original hand.
+        SplitHand newHand = new SplitHand(newHid, origHand);
+        
         // Log that we are doing a split action
         // Guess we will log what cards we are splitting and the "new hand amount"
         LOG.info("Player requested to split " 
                 + origHand.getCard(0).getName() 
                 + "'s."); // = "+hid.getAmt()+" hid = "+hid);
-        
-        // Now we need the "other" hand.
-        Hand newHand = SplitHand.split(origHand);
-        
-        // Add this hand to the dealers array of hands
-        hands.put(newHand.getHid(), newHand);
-        
+
         // Add this hand to this player
         players.put(newHand.getHid(), player);
         
@@ -65,19 +57,13 @@ public class SplitDealer extends Dealer {
         int i = handSequence.indexOf(hid);
         handSequence.add((i+1),newHand.getHid());
         
-          //      player.play(newHand.getHid());
+        hands.put(newHid, newHand);
         
-        // Now we want to Play the new hand.
-        // For testing, let's leave this but the end design
-        // will be a helper function to ensure only one hand
-        // is played at a time.
+        // Send back to the ATable what has just occured.
+        player.split(newHid, hid);
+        
+        // 'hit' one of the new hands
         super.hit(player, hid);
-      //  super.stay(player, newHand.getHid());
-        
-        // Once we come back we want to play the other hand
-       // super.hit(player, hid);
-      //  super.stay(player, hid);
-
         
     }
 }

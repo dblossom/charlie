@@ -44,4 +44,7 @@ public interface IUi {
     abstract public void ending(int shoeSize);
     abstract public void shuffling();
     abstract public void setCourier(Courier courier);
+    
+    // added for Split Implementation 
+    abstract public void split(Hid newHid, Hid origHid);
 }
