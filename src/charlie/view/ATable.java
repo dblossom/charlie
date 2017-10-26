@@ -933,6 +933,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         
         manos.put(newHid, newHand);
         
+        you.add(newHand);
+        
         this.frame.addSplitHid(newHid);
         
     }
