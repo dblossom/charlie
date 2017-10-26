@@ -935,6 +935,10 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         
         you.add(newHand);
         
+        // to add bet to table, do we need to make a "split one?"
+        // any reason why this would fail?
+        this.dubble(newHid);
+        
         this.frame.addSplitHid(newHid);
         
     }
