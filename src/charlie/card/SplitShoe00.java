@@ -14,7 +14,7 @@ public class SplitShoe00 extends Shoe{
         cards.add(new Card(9, Card.Suit.HEARTS));
         
         // Dealers first card
-        cards.add(new Card(8, Card.Suit.CLUBS));
+        cards.add(new Card(2, Card.Suit.CLUBS));
         
         // My second card
         cards.add(new Card(9, Card.Suit.SPADES));
@@ -28,8 +28,11 @@ public class SplitShoe00 extends Shoe{
         // My first card for the second hand
         cards.add(new Card(9, Card.Suit.DIAMONDS));
         
-        // My first card second round
-        cards.add(new Card(Card.ACE, Card.Suit.HEARTS));
+//        // My first card second round
+//        cards.add(new Card(Card.ACE, Card.Suit.HEARTS));
+
+        // want the dealer to break ... still like the A above to test later
+        cards.add(new Card(Card.KING, Card.Suit.HEARTS));
         
         // dealers first card second round
         cards.add(new Card(10, Card.Suit.CLUBS)); 

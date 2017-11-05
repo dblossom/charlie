@@ -68,6 +68,7 @@ public class AHandsManager {
         }
 //        for(AHand hand: this)
 //            hand.render(g);
+
     }
     
     /**
@@ -120,7 +121,7 @@ public class AHandsManager {
         int offset = hands.size() % 2 == 0 ? ACard.cardWidth : ACard.cardWidth / 2;
         
         // Move all the hands further to the left
-        int x = hands.get(0).getHome().getX() - offset;
+        int x = hands.get(0).getHome().getX() + offset;
         int y = hands.get(0).getHome().getY();
         
         for(AHand hand: hands) {
@@ -128,7 +129,7 @@ public class AHandsManager {
             
             hand.setHome(newhome);
             
-            x += (ACard.cardWidth + handInset + 50 );
+            x += (ACard.cardWidth + handInset);
         }
     }
     

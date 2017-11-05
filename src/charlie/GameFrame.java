@@ -732,15 +732,10 @@ public class GameFrame extends javax.swing.JFrame {
             public void run() {
 
                 // no more splits this go.
-                // also have to figure out a way to block splits if player gets another pair.
                 splitButton.setEnabled(false);
 
                 // get active hand
                 Hid hid = hids.get(frame.handIndex);
-                
-                // Need to inc this so the frame gives the 'next' hid
-                // to the dealer after the first hand is complete.
-                frame.handIndex++;
 
                 // tell the dealer we requested a split and provide an HID
                 courier.split(hid);
@@ -766,6 +761,12 @@ public class GameFrame extends javax.swing.JFrame {
     
     public void addSplitHid(Hid hid){
         this.hids.add(hid);
+    }
+    
+    public void updateHandIndex(){
+        if(handIndex < hids.size()){
+            handIndex++;
+        } 
     }
     
     /**

@@ -391,6 +391,12 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
 
             // If turn is NOT my hand, disable my hand
             boolean enable = true;
+            
+            // ONLY update player hand
+            if(hid.getSplit()){
+                // update hand index
+                this.frame.updateHandIndex();
+            }
 
             if (hid.getSeat() != Seat.YOU) {
                 enable = false;
@@ -918,29 +924,41 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     @Override
     public void split(Hid newHid, Hid origHid) {
         
-        // Let us get our 'hand' on the original hand
+        // Let us get our 'hand' aka the original hand
         AHand hand = manos.get(origHid);
         
+        // We need to remove one of the cards put this in new hand later
         ACard card = hand.cards.remove(1);
         
-        int[] newHandValues = setHandValues(hand);
+        // Revalue the hands values
+        int[] newHandValues = splitRevalue(hand);
         
+        // Set the new value for original hand
         hand.setValues(newHandValues);
-
+        
+        // Create a new AHand from the new HID
         AHand newHand = new AHand(newHid);
+        
+        // Let us 'hit' that hand with one of the split cards
         newHand.hit(card);
+        
+        // Now we will set the value of that hand
         newHand.setValues(newHandValues);
         
+        // Add the new hand to the hand hash 'manos'
         manos.put(newHid, newHand);
         
+        // Increase so we know there is another hand
+        numHands++;
+        
+        // Add hand to me -- hmm, might want to change this in the future to be any AHandsManager
         you.add(newHand);
         
-        // to add bet to table, do we need to make a "split one?"
-        // any reason why this would fail?
+        // Add bet to table -- do we want to make something different?
         this.dubble(newHid);
         
+        // Need to add our hid to the frames array of hids.
         this.frame.addSplitHid(newHid);
-        
     }
     
     /**
@@ -949,7 +967,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
      * @param hand hand to revalue
      * @return hard/soft values.
      */
-    private int[] setHandValues(AHand hand){
+    private int[] splitRevalue(AHand hand){
 
         int[] value = new int[2];
         

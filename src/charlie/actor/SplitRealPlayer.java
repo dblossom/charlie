@@ -1,12 +1,9 @@
 package charlie.actor;
 
-import charlie.card.Hand;
 import charlie.card.Hid;
 import charlie.dealer.SplitDealer;
 import charlie.message.view.from.SplitFromView;
 import charlie.message.view.to.SplitToView;
-//import charlie.message.view.to.Split;
-
 import charlie.plugin.IPlayer;
 import com.googlecode.actorom.Address;
 import com.googlecode.actorom.annotation.OnMessage;

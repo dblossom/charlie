@@ -1,6 +1,7 @@
 package charlie.dealer;
 
 import charlie.actor.House;
+import charlie.card.Card;
 import charlie.card.Hand;
 import charlie.card.Hid;
 import charlie.card.SplitHand;
@@ -17,10 +18,31 @@ import org.slf4j.LoggerFactory;
  */
 public class SplitDealer extends Dealer {
     
-    private final Logger LOG = LoggerFactory.getLogger(SplitDealer.class); 
+    private final Logger LOG = LoggerFactory.getLogger(SplitDealer.class);
+    
     
     public SplitDealer(House house){
         super(house);
+    }
+    
+    /**
+     * Override the 'goNextHand()' but still, regardless will call the
+     * 'super.goNextHand()' method to preform tasks there. This override
+     * is to ensure, after a split, the first card is automatically dealt.
+     */
+    @Override
+    protected void goNextHand(){
+        if(handSeqIndex < handSequence.size()){
+            Hid hid = handSequence.get(handSeqIndex);
+            Hand hand = super.hands.get(hid);
+            if(hid.getSplit() && hand.size() == 1){
+                Card card = deal();
+                hand.hit(card);
+                for (IPlayer _player : playerSequence)
+                    _player.deal(hid, card, hand.getValues());
+            }
+        }
+        super.goNextHand();
     }
 
     public void split(IPlayer player, Hid hid){
@@ -38,6 +60,8 @@ public class SplitDealer extends Dealer {
         // Same seat, same bet amount, but no sidebet as player
         // does side bet and did or did not already.
         Hid newHid = new Hid(hid.getSeat(), hid.getAmt(), 0);
+        
+        newHid.setSplit(true);
         
         // Let us split the original hand.
         SplitHand newHand = new SplitHand(newHid, origHand);
@@ -62,8 +86,8 @@ public class SplitDealer extends Dealer {
         // Send back to the ATable what has just occured.
         player.split(newHid, hid);
         
-        // 'hit' one of the new hands
+        // Need to hit the one of the hands, might as well make it the 
+        // original.
         super.hit(player, hid);
-        
     }
 }

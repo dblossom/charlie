@@ -47,6 +47,13 @@ public class Hid implements Serializable {
     protected double amt = 0.0;
     protected double sideAmt = 0.0;
     
+    /**
+     * Set if this hand was created due to a split
+     * For now, it's part of my "handIndex" solution 
+     * on the server side .... 
+     */
+    private boolean split = false;
+    
     static {
         try {
             InetAddress addr = InetAddress.getLocalHost();
@@ -156,6 +163,22 @@ public class Hid implements Serializable {
      */
     public void setSideAmt(double sideAmt) {
         this.sideAmt = sideAmt;
+    }
+    
+    /**
+     * Gets the split notification, if hand was created due to a split
+     * @return boolean true if hand was created due to a split
+     */
+    public boolean getSplit(){
+        return this.split;
+    }
+    
+    /**
+     * Sets the split notification, if hand was created due to a split
+     * @param split true or false whether it was created due to split
+     */
+    public void setSplit(boolean split){
+        this.split = split;
     }
     
     /**
