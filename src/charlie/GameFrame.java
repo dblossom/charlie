@@ -584,8 +584,10 @@ public class GameFrame extends javax.swing.JFrame {
 
         this.handIndex = 0;
 
-        this.dubblable = true;
-
+        //this.dubblable = true;
+        this.setdubblable(true);
+        
+        
         final GameFrame frame = this;
 //        SwingUtilities.invokeLater(new Runnable() {
         new Thread(new Runnable() {
@@ -664,7 +666,8 @@ public class GameFrame extends javax.swing.JFrame {
                 
                 // NOTE: this isables double down on all hids and will have to be
                 // fixed when splitting hids
-                frame.dubblable = false;
+                //frame.dubblable = false;
+                frame.setdubblable(false);
 
                 // Disable play until the card arrives
                 enablePlay(false);
@@ -696,8 +699,9 @@ public class GameFrame extends javax.swing.JFrame {
                 enablePlay(false);
 
                 // No further dubbling until the next bet made
-                dubblable = false;
-
+                //dubblable = false;
+                frame.setdubblable(false);
+                
                 // Double the bet in the myHand using a copy since this
                 // is a transient bet.
                 hid.dubble();
@@ -759,14 +763,31 @@ public class GameFrame extends javax.swing.JFrame {
         this.splitable = hand.isPair();
     }
     
-    public void addSplitHid(Hid hid){
+    /**
+     * Adds a hid to hid list. 
+     * @param hid the hid to add
+     */
+    public void addHandList(Hid hid){
         this.hids.add(hid);
     }
     
+    /**
+     * Increment the hand index.
+     * 
+     * I think a "set" and HID is a better solution than ArrayList
+     */
     public void updateHandIndex(){
         if(handIndex < hids.size()){
             handIndex++;
-        } 
+        }         
+    }
+    
+    /**
+     * Sets the double variable true/false
+     * @param state - the state to make 'dubblable'
+     */
+    public void setdubblable(boolean state){
+       this.dubblable = state; 
     }
     
     /**

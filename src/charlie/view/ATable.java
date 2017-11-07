@@ -396,6 +396,8 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             if(hid.getSplit()){
                 // update hand index
                 this.frame.updateHandIndex();
+                this.frame.setdubblable(true);
+                this.frame.enablePlay(true); // this needed? 
             }
 
             if (hid.getSeat() != Seat.YOU) {
@@ -958,7 +960,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         this.dubble(newHid);
         
         // Need to add our hid to the frames array of hids.
-        this.frame.addSplitHid(newHid);
+        this.frame.addHandList(newHid);
     }
     
     /**
