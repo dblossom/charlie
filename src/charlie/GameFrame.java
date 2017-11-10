@@ -592,7 +592,7 @@ public class GameFrame extends javax.swing.JFrame {
 //        SwingUtilities.invokeLater(new Runnable() {
         new Thread(new Runnable() {
             @Override
-            public void run() {               
+            public void run() {        
                 // Clear the table and shuffle the cards.
                 frame.table.clear();
                 

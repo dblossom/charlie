@@ -161,7 +161,11 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             // Skip dealer since it doesn't have a money manager
             if (money == null)
                 continue;
-
+            
+            // MUST BE IN THIS ORDER.... 
+            // Otherwise, 'unsplit' might cause table amount to report wrong
+            // TODO: Fix unsplit to be a bit more robust.?
+            money.unsplit();
             money.undubble();
         }
         
@@ -349,7 +353,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     public void dubble(Hid hid) {
         AMoneyManager money = this.monies.get(hid.getSeat());
 
-        money.dubble();
+        money.dubble(hid);
     }
 
     /**
@@ -957,7 +961,10 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         you.add(newHand);
         
         // Add bet to table -- do we want to make something different?
-        this.dubble(newHid);
+        AMoneyManager money = this.monies.get(newHid.getSeat());
+        money.split();
+        
+        this.render();
         
         // Need to add our hid to the frames array of hids.
         this.frame.addHandList(newHid);

@@ -24,6 +24,7 @@ package charlie.view;
 
 import charlie.audio.Effect;
 import charlie.audio.SoundFactory;
+import charlie.card.Hid;
 import charlie.view.sprite.Chip;
 import charlie.view.sprite.AtStakeSprite;
 import charlie.view.sprite.ChipButton;
@@ -82,6 +83,13 @@ public class AMoneyManager {
     protected boolean dubble = false;
     
     /**
+     * When a split, keep track of each hands chips
+     * @author D. Blossom Fall 2017
+     */
+    protected List<Chip> splitChips = new ArrayList<>();
+    protected boolean splitChipsActive = false;
+    
+    /**
      * Constructor
      */
     public AMoneyManager() {
@@ -113,32 +121,57 @@ public class AMoneyManager {
     
     /**
      * Doubles the wager.
+     * @param hid Hand ID to double
      */
-    public void dubble() {
+    public void dubble(Hid hid) {
         // Can double only once
+        // NOTE: this will only be set when the "default" chip array
+        //       is used, which indicates either it wasn't a split hand
+        //       or the second split hand happened AND doubled.
         if(dubble)
             return;
         
-        // Copy in the new chips
-        int sz = chips.size();
-        int x = chips.get(sz-1).getX();
-        int y = chips.get(sz-1).getY() + ran.nextInt(5)-5;
+        //so we are only init things once and doing the loop once
+        // sz = size of array
+        // x = x location
+        // y = y location
+        // whichStack = which array "chip" stack to use.
+        int sz;
+        int x;
+        int y;
+        List<Chip> whichStack;
+        
+        // Copy in new chips
+        // why !hid.getSplit()? because splitChips array goes
+        // to left most hand, however, the right most hand is
+        // the one with the "I am the split hand" variable set
+        // something to consider fixing or changing if time allows
+        if(!this.splitChips.isEmpty() && !hid.getSplit()){
+            sz = splitChips.size();
+            x = splitChips.get(sz-1).getX();
+            y = splitChips.get(sz-1).getY() + ran.nextInt(5)-5;
+            whichStack = splitChips;
+        }else{
+            sz = chips.size();
+            x = chips.get(sz-1).getX();
+            y = chips.get(sz-1).getY() + ran.nextInt(5)-5;
+            whichStack = chips;
+            dubble = true;
+        }
         
         for(int n=0; n < sz; n++) {
                 int placeX = x + (n+1) * width/3 + ran.nextInt(10)-10;
                 int placeY = y + ran.nextInt(5)-5;
                 
-                Chip chip = new Chip(chips.get(n));
+                Chip chip = new Chip(whichStack.get(n));
                 
                 chip.setX(placeX);
                 chip.setY(placeY);
                 
-                chips.add(chip);                        
+                whichStack.add(chip);                        
         }
         
-        this.wager.dubble();
-        
-        dubble = true;
+        this.wager.dubble(hid);
     }
     
     /**
@@ -168,6 +201,41 @@ public class AMoneyManager {
         // Enable double down
         dubble = false;
     }
+    
+    /**
+     * Puts wager on the table for split
+     */
+    public void split(){
+        // What's the original (this will ne for the "new" hand
+        // The new chips coming in will be moved to the left.
+        int xPoint = chips.get(chips.size()-1).getX();
+        int yPoint = chips.get(chips.size()-1).getY();
+        
+        for(int n=0; n < chips.size(); n++) {
+                int placeX = xPoint + (n+1) * width/3 + ran.nextInt(10)-10;
+                //int placeY = yPoint + ran.nextInt(5)-5;
+                
+                placeX = placeX - 120;
+                
+                Chip chip = new Chip(chips.get(n));
+                
+                chip.setX(placeX);
+                chip.setY(yPoint);
+                
+                this.splitChips.add(chip);
+                this.wager.increase(chip.getAmt());
+        }
+    }
+    
+    public void unsplit(){
+        int value = 0;
+        for(Chip chip: splitChips){
+            value+=chip.getAmt();
+        }
+        this.wager.setAmt(this.wager.getAmt()-value);
+        this.splitChips.clear();
+    }
+    
     
     /**
      * Increases bankroll from a win.
@@ -221,6 +289,10 @@ public class AMoneyManager {
         
         for(int i=0; i < chips.size(); i++) {
             Chip chip = chips.get(i);
+            chip.render(g);
+        }
+        
+        for(Chip chip: splitChips){
             chip.render(g);
         }
         

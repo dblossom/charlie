@@ -22,6 +22,7 @@
  */
 package charlie.view.sprite;
 
+import charlie.card.Hid;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -62,9 +63,10 @@ public class AtStakeSprite {
     
     /**
      * Doubles the bet amount.
+     * @param hid Hand ID to double wager
      */
-    public void dubble() {
-        this.amt *= 2;
+    public void dubble(Hid hid) {
+        this.amt += (int) (hid.getAmt() / 2);
     }
     
     /**
