@@ -760,7 +760,12 @@ public class GameFrame extends javax.swing.JFrame {
         
         Hand hand = hands.get(hid);
         
-        this.splitable = hand.isPair();
+        // IF a player is on the second hand of a split
+        // and the player HITS, when it comes into the "deal(...)"
+        // method here, the third card isn't dealt yet to "this" hand
+        // and the hand.isPair() will return true... the !hid.getSplit()
+        // will return false.
+        this.splitable = hand.isPair() && !hid.getSplit();
     }
     
     /**
