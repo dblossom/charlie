@@ -31,6 +31,7 @@ import charlie.card.Hand;
 import charlie.plugin.IPlayer;
 import charlie.message.view.from.DoubleDown;
 import charlie.message.view.from.Request;
+import charlie.message.view.from.SplitFromView;
 import charlie.message.view.from.Stay;
 import charlie.message.view.to.Blackjack;
 import charlie.message.view.to.Bust;
@@ -43,6 +44,7 @@ import charlie.message.view.to.Play;
 import charlie.message.view.to.Push;
 import charlie.message.view.to.GameStart;
 import charlie.message.view.to.Shuffle;
+import charlie.message.view.to.SplitToView;
 import charlie.message.view.to.Win;
 import com.googlecode.actorom.Actor;
 import com.googlecode.actorom.Address;
@@ -122,6 +124,19 @@ public class RealPlayer implements IPlayer {
         else
             LOG.error("received unknown request: "+request+" for hand = "+hand);
     }
+    
+    /**
+     * Receives a request from the courier that player split
+     * TODO: integrate into above "request" as it's the same "group" of
+     *       hit, stay, double.
+     * @param split split Request
+     */
+    @OnMessage(type = SplitFromView.class)
+    public void onReceive(SplitFromView split) {
+        LOG.info("received split notification from player = "+split);
+                
+        dealer.split(this, split.getHid());
+    }   
 
     /**
      * Sets my address since courier doesn't know where it is.
@@ -241,22 +256,21 @@ public class RealPlayer implements IPlayer {
     }
     
     /**
+     * Sends the split request back to the courier / ATable
+     * @param newHid the HID for the newly created hand
+     * @param hid the HID for the hand that was just split
+     */
+    @Override
+    public void split(Hid newHid, Hid hid){
+        courier.send(new SplitToView(newHid, hid));
+    }
+    
+    /**
      * Converts instance to a string.
      * @return String representation
      */
     @Override
     public String toString() {
         return this.myAddress + " -> " + courier.getAddress();
-    }
-
-    /**
-     * The below methods were added to IPlayer and are actually implemented in
-     * SplitRealPlayer. Doing this breaks IBot and other code since these will
-     * not be implemented. This is fine for now
-     */
-
-    @Override
-    public void split(Hid newHid, Hid origHid) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

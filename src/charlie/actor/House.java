@@ -24,7 +24,6 @@ package charlie.actor;
 
 import charlie.card.Hid;
 import charlie.dealer.Dealer;
-import charlie.dealer.SplitDealer;
 import charlie.plugin.IPlayer;
 import charlie.message.view.from.Arrival;
 import charlie.server.GameServer;
@@ -92,11 +91,9 @@ public class House implements Serializable {
         // Note: if we were allocating dealers from a pool, this is the place
         // to implement that logic. For now we'll just spawn dealers without
         // restriction.
-        //Dealer dealer = new Dealer(this);
-        Dealer dealer = new SplitDealer(this);
+        Dealer dealer = new Dealer(this);
         // Spawn an actor in server
-        //RealPlayer player = new RealPlayer(dealer, courierAddress);
-        RealPlayer player = new SplitRealPlayer(((SplitDealer)dealer), courierAddress);
+        RealPlayer player = new RealPlayer(dealer, courierAddress);
         accounts.put(player,ticket);
         
         synchronized(this) {
@@ -141,6 +138,7 @@ public class House implements Serializable {
      * Updates the bankroll.
      * @param hid Hand
      * @param gain P&L
+     * @param player the player
      */
     public void updateBankroll(IPlayer player,Hid hid,Double gain) {      
         if(player == null || !accounts.containsKey(player))
@@ -155,7 +153,7 @@ public class House implements Serializable {
     
     /**
      * Gets the bankroll for a myAddress.
-     * @param myAddress Player
+     * @param player the player
      * @return Dollar amount of bankroll
      */
     public Double getBankroll(IPlayer player) {

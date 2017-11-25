@@ -75,6 +75,9 @@ public class Dealer implements Serializable {
     protected boolean gameOver = false;
     protected boolean shufflePending = false;
     
+    // To "delay" deal so cards do not come out too fast
+    private final int DEAL_DELAY = 1500;
+    
     /**
      * Constructor
      * @param house House actor which launched dealer.
@@ -484,6 +487,59 @@ public class Dealer implements Serializable {
         // Go to next hand regardless on a double down
         goNextHand();
     }
+    
+    /**
+     * Split player hand upon request from Player. Only "human" player can split.
+     * Player cannot split, splits.
+     * @param player the player who requested the split
+     * @param hid the hand to which needs splitting.
+     */
+    public void split(IPlayer player, Hid hid){
+        
+        // First we need to validate original hand
+        Hand origHand = validate(hid);
+        
+        // Log any errors
+        if(origHand == null) {
+            LOG.error("got invalid SPLIT player = "+player);
+            return;
+        }
+        
+        // Create a new Hand ID from original.
+        // Same seat, same bet amount, but no sidebet as player
+        // does side bet and did or did not already.
+        Hid newHid = new Hid(hid.getSeat(), hid.getAmt(), 0);
+        
+        newHid.setSplit(true);
+        
+        // Let us split the original hand.
+        Hand newHand = origHand.split(newHid);
+        
+        // Log that we are doing a split action
+        // Guess we will log what cards we are splitting and the "new hand amount"
+        LOG.info("Player requested to split " 
+                + origHand.getCard(0).getName() 
+                + "'s."); 
+        LOG.info("HID: " + newHid + " created for hand: " + newHand );
+
+        // Add this hand to this player
+        players.put(newHand.getHid(), player);
+        
+        // Now that we have two hands we need to manipulate the handSeqIndex
+        // Think it will be easier to add it AFTER the current hand since that
+        // hand is actually "in play" ... 
+        int i = handSequence.indexOf(hid);
+        handSequence.add((i+1),newHand.getHid());
+        
+        hands.put(newHid, newHand);
+        
+        // Send back to the ATable what has just occured.
+        player.split(newHid, hid);
+        
+        // Need to hit the one of the hands, might as well make it the 
+        // original.
+        this.hit(player, hid);
+    }
      
     /**
      * Moves to the next hand at the table
@@ -493,6 +549,9 @@ public class Dealer implements Serializable {
         
         // Get next hand and inform player
         if (handSeqIndex < handSequence.size()) {
+            // did we "hit" a split hand this time
+            boolean firstSplitHit = false;
+            
             Hid hid = handSequence.get(handSeqIndex++);
 
             active = players.get(hid);
@@ -507,10 +566,38 @@ public class Dealer implements Serializable {
                 goNextHand();
                 return;
             }
+            
+            // Is this hand created from a "split" AND about to be new turn?
+            // If so, we need to "HIT" the hand with its first card.
+            if(hid.getSplit() && hand.size() == 1){
+                // Need to add a delay or it comes out too fast.
+                try{
+                    Thread.sleep(DEAL_DELAY);
+                    
+                    Card card = deal(); 
+                    
+                    hand.hit(card);
+                    
+                    firstSplitHit = true;
+                }catch(InterruptedException ex){
+                    LOG.error(ex.getMessage());
+                }
+            }
 
             // Unless the player got a isBlackjack, tell the player they're
             // to start playing this hand
             for (IPlayer player: playerSequence) {
+                
+                // If the hand is a split, lets tell everyone a deal happened.
+                // Do this here to prevent using the same 'for loop' twice.
+                if(firstSplitHit){
+                    // set to false
+                    firstSplitHit = !firstSplitHit;
+                    
+                    // tell players about hit
+                    player.deal(hid, hand.getCard(1), hand.getValues());
+                }
+                
                 LOG.info("sending turn "+hid+" to "+player);
                 player.play(hid);
             }

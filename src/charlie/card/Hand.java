@@ -152,6 +152,31 @@ public class Hand implements Serializable {
         if(card.isAce() && values[Constant.HAND_SOFT_VALUE]+10 <= 21)
             values[Constant.HAND_SOFT_VALUE] += 10;
     }
+    
+    /**
+     * Splits the cards into two hands and returns the newly created hand.
+     * @param newHid the new Hand ID for the hand.
+     * @return Hand the newly created hand.
+     */
+    public Hand split(Hid newHid){
+        
+        // Create a new hand
+        Hand newHand = new Hand(newHid);
+                
+        // WARNING::REMOVING THE UN-NEEDED CARD WHILE RETURNING IT.
+        // Should use setter and getter here?
+        // altering original hand from constructor - deep copy instead?
+        Card card = this.cards.remove(1);
+        
+        // Update "this" hand's values
+        this.revalue();
+        
+        // Give the new hand a card, the card we removed from this hand
+        newHand.hit(card);
+        
+        // Now return the new hand
+        return newHand;
+    }
         
     /**
      * Revalues the hand.
