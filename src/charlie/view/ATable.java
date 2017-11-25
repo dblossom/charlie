@@ -65,7 +65,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
     protected Random ran = new Random();
     protected String[] huey = {"Huey"};
     protected String[] dewey = {"Dewey"};
-    protected AHandsManager you = new AHandsManager("You", new Point(225, 225));
+    protected AHandsManager you = new AHandsManager("You", new Point(250, 225));
     protected AHandsManager dealer = new AHandsManager("Dealer", new Point(225, 0));
     protected AHandsManager b9 = new AHandsManager(huey[ran.nextInt(huey.length)], new Point(450, 150));
     protected AHandsManager n6 = new AHandsManager(dewey[ran.nextInt(dewey.length)], new Point(25, 150));
@@ -164,7 +164,7 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
             
             // MUST BE IN THIS ORDER.... 
             // Otherwise, 'unsplit' might cause table amount to report wrong
-            // TODO: Fix unsplit to be a bit more robust.?
+            // TODO: Fix unsplit to be a bit more robust
             money.unsplit();
             money.undubble();
         }
@@ -964,10 +964,12 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         AMoneyManager money = this.monies.get(newHid.getSeat());
         money.split();
         
-        this.render();
-        
         // Need to add our hid to the frames array of hids.
         this.frame.addHandList(newHid);
+        
+        if(this.logan != null){
+            this.logan.split(newHid, origHid);
+        }
     }
     
     /**

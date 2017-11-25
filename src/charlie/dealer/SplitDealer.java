@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class SplitDealer extends Dealer {
     
     private final Logger LOG = LoggerFactory.getLogger(SplitDealer.class);
+    private final int DEAL_DELAY = 1500;
     
     
     public SplitDealer(House house){
@@ -36,10 +37,20 @@ public class SplitDealer extends Dealer {
             Hid hid = handSequence.get(handSeqIndex);
             Hand hand = super.hands.get(hid);
             if(hid.getSplit() && hand.size() == 1){
-                Card card = deal();
-                hand.hit(card);
-                for (IPlayer _player : playerSequence)
-                    _player.deal(hid, card, hand.getValues());
+                
+                try{
+                    Thread.sleep(DEAL_DELAY);
+                    
+                    Card card = deal();
+                    
+                    hand.hit(card);
+                    
+                    for (IPlayer _player : playerSequence){
+                        _player.deal(hid, card, hand.getValues());
+                    }
+                } catch (InterruptedException ex) {
+                    LOG.error(ex.getMessage());
+                }
             }
         }
         super.goNextHand();
@@ -70,7 +81,8 @@ public class SplitDealer extends Dealer {
         // Guess we will log what cards we are splitting and the "new hand amount"
         LOG.info("Player requested to split " 
                 + origHand.getCard(0).getName() 
-                + "'s."); // = "+hid.getAmt()+" hid = "+hid);
+                + "'s."); 
+        LOG.info("HID: " + newHid + " created for hand: " + newHand );
 
         // Add this hand to this player
         players.put(newHand.getHid(), player);

@@ -129,7 +129,7 @@ public class AHandsManager {
             
             hand.setHome(newhome);
             
-            x += (ACard.cardWidth + handInset + 50);
+            x += (ACard.cardWidth + handInset + 70);
         }
     }
     

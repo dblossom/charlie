@@ -215,7 +215,7 @@ public class AMoneyManager {
                 int placeX = xPoint + (n+1) * width/3 + ran.nextInt(10)-10;
                 //int placeY = yPoint + ran.nextInt(5)-5;
                 
-                placeX = placeX - 120;
+                placeX = placeX - 110;
                 
                 Chip chip = new Chip(chips.get(n));
                 

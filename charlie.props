@@ -5,5 +5,5 @@ charlie.debug true
 charlie.shoe charlie.card.ShoeSameCards
 charlie.advisor charlie.advisor.BasicStrategy
 #charlie.bot.logan5 charlie.bot.client.MyClientBot
-#charlie.bot.huey charlie.bot.server.MyBot
-#charlie.bot.dewey charlie.bot.server.MyBot
+charlie.bot.huey charlie.bot.server.MyBot
+charlie.bot.dewey charlie.bot.server.MyBot

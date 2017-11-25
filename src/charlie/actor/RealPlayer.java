@@ -257,6 +257,6 @@ public class RealPlayer implements IPlayer {
 
     @Override
     public void split(Hid newHid, Hid origHid) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

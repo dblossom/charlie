@@ -138,13 +138,13 @@ public class AHand {
                 return;
             
             // Figure the outcome text
-            String outcomeText = "";             
+              String outcomeText = "";             
             if(outcome != Outcome.None)
                 outcomeText += " " + outcome.toString().toUpperCase() + " ! "; 
             
             // Calculate the outcome position
             int cardHeight = ACard.getCardHeight();
-            x = cards.get(sz-1).getHome().getX() + cardWidth - 15;
+            x = cards.get(sz-1).getHome().getX() + cardWidth - 100; // was 15 trying to center more
             y = cards.get(sz-1).getHome().getY() + cardHeight / 2; 
             
             FontMetrics fm = g.getFontMetrics(outcomeFont);

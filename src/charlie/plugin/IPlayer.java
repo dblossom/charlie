@@ -23,7 +23,6 @@
 package charlie.plugin;
 
 import charlie.card.Card;
-import charlie.card.Hand;
 import charlie.card.Hid;
 import java.util.List;
 
@@ -107,12 +106,8 @@ public interface IPlayer {
      */     
     abstract public void play(Hid hid);
     
-    // The below two methods should be factored out as to not cause issues
-    // for other code already implemented, since other things will implement
-    // this IPlayer.
-    
     /**
-     * Tells player to split the hand?
+     * Tells player to split the hand.
      * @param newHid the new hand id
      * @param origHid the original hand id
      */
