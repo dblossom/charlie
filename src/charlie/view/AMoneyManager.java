@@ -410,6 +410,8 @@ public class AMoneyManager {
         this.wager.zero();
 
         chips.clear();
+        
+        splitChips.clear();
 
         SoundFactory.play(Effect.CHIPS_OUT);     
     }
