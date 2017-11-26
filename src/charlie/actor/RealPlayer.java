@@ -121,22 +121,13 @@ public class RealPlayer implements IPlayer {
         else if(request instanceof DoubleDown)
             dealer.doubleDown(this, hand);
         
+        else if(request instanceof SplitFromView){
+            dealer.split(this, hand);
+        }
+        
         else
             LOG.error("received unknown request: "+request+" for hand = "+hand);
-    }
-    
-    /**
-     * Receives a request from the courier that player split
-     * TODO: integrate into above "request" as it's the same "group" of
-     *       hit, stay, double.
-     * @param split split Request
-     */
-    @OnMessage(type = SplitFromView.class)
-    public void onReceive(SplitFromView split) {
-        LOG.info("received split notification from player = "+split);
-                
-        dealer.split(this, split.getHid());
-    }   
+    } 
 
     /**
      * Sets my address since courier doesn't know where it is.
