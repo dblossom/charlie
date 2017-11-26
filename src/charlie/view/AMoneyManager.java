@@ -160,15 +160,26 @@ public class AMoneyManager {
         }
         
         for(int n=0; n < sz; n++) {
-                int placeX = x + (n+1) * width/3 + ran.nextInt(10)-10;
-                int placeY = y + ran.nextInt(5)-5;
+            
+            // place holder for the X point
+            int placeX;
+            
+            // if we need the chips to go to the left vs the right
+            // depending on which stack chips are being placed on.
+            if(whichStack == splitChips){
+               placeX = x - (n * width/3) - ran.nextInt(10);
+            }else{
+                placeX = x + (n+1) * width/3 + ran.nextInt(10)-10;
+            }
+            
+            int placeY = y + ran.nextInt(5)-5;
                 
-                Chip chip = new Chip(whichStack.get(n));
+            Chip chip = new Chip(whichStack.get(n));
                 
-                chip.setX(placeX);
-                chip.setY(placeY);
+            chip.setX(placeX);
+            chip.setY(placeY);
                 
-                whichStack.add(chip);                        
+            whichStack.add(chip);                        
         }
         
         this.wager.dubble(hid);
@@ -206,24 +217,31 @@ public class AMoneyManager {
      * Puts wager on the table for split
      */
     public void split(){
-        // What's the original (this will ne for the "new" hand
-        // The new chips coming in will be moved to the left.
-        int xPoint = chips.get(chips.size()-1).getX();
-        int yPoint = chips.get(chips.size()-1).getY();
         
+        // Starting point to the left of the wager circle
+        int startX = PLACE_HOME_X - 100;
+
         for(int n=0; n < chips.size(); n++) {
-                int placeX = xPoint + (n+1) * width/3 + ran.nextInt(10)-10;
-                //int placeY = yPoint + ran.nextInt(5)-5;
+            
+            // randomly layout "x-point" going to the left
+            // Something about that "width / 3"
+            int xPoint = startX - (n * width/3) - ran.nextInt(10);
+            
+            // Keep the "y-point" from original chips
+            int yPoint = chips.get(n).getY();
+            
+            // create a new chip from the original chip
+            Chip chip = new Chip(chips.get(n));
                 
-                placeX = placeX - 110;
+            // Set the chips x & y points
+            chip.setX(xPoint);
+            chip.setY(yPoint);
                 
-                Chip chip = new Chip(chips.get(n));
-                
-                chip.setX(placeX);
-                chip.setY(yPoint);
-                
-                this.splitChips.add(chip);
-                this.wager.increase(chip.getAmt());
+            // add chip to the "split chips" stack
+            this.splitChips.add(chip);
+            
+            // add the wager to the table.
+            this.wager.increase(chip.getAmt());
         }
     }
     
