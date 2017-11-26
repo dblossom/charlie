@@ -591,9 +591,6 @@ public class Dealer implements Serializable {
                 // If the hand is a split, lets tell everyone a deal happened.
                 // Do this here to prevent using the same 'for loop' twice.
                 if(firstSplitHit){
-                    // set to false
-                    firstSplitHit = !firstSplitHit;
-                    
                     // tell players about hit
                     player.deal(hid, hand.getCard(1), hand.getValues());
                 }
