@@ -98,7 +98,7 @@ public class GameFrame extends javax.swing.JFrame {
      * @author Dan Blossom
      * @date 10/2017
      */
-    protected boolean splitable = false;
+    protected boolean splittable = false;
 
     /**
      * Constructor
@@ -351,7 +351,7 @@ public class GameFrame extends javax.swing.JFrame {
 
         this.ddownButton.setEnabled(state && dubblable && trucking && manuallyControlled);
         
-        this.splitButton.setEnabled(state && splitable && trucking && manuallyControlled);
+        this.splitButton.setEnabled(state && splittable && trucking && manuallyControlled);
     }
 
     /**
@@ -633,7 +633,7 @@ public class GameFrame extends javax.swing.JFrame {
      */
     private void stayButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stayButtonActionPerformed
         final GameFrame frame = this;
-
+                
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -754,7 +754,7 @@ public class GameFrame extends javax.swing.JFrame {
     public void enableSplitButton(Hid hid){
         
         if(hid.getSeat() != Seat.YOU){
-            this.splitable = false;
+            this.splittable = false;
             return;
         }
         
@@ -765,7 +765,7 @@ public class GameFrame extends javax.swing.JFrame {
         // method here, the third card isn't dealt yet to "this" hand
         // and the hand.isPair() will return true... the !hid.getSplit()
         // will return false.
-        this.splitable = hand.isPair() && !hid.getSplit();
+        this.splittable = hand.isPair() && !hid.getSplit();
     }
     
     /**
