@@ -760,11 +760,7 @@ public class GameFrame extends javax.swing.JFrame {
         
         Hand hand = hands.get(hid);
         
-        // IF a player is on the second hand of a split
-        // and the player HITS, when it comes into the "deal(...)"
-        // method here, the third card isn't dealt yet to "this" hand
-        // and the hand.isPair() will return true... the !hid.getSplit()
-        // will return false.
+        // If the hand is a pair && it hasn't been part of a split
         this.splittable = hand.isPair() && !hid.getSplit();
     }
     
@@ -775,6 +771,7 @@ public class GameFrame extends javax.swing.JFrame {
      * @param origHid the original hid to be edited
      */
     public void split(Hid newHid, Hid origHid){
+        
         this.hids.add(newHid);
         
         // Create two hands from cards.

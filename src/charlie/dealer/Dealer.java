@@ -403,6 +403,9 @@ public class Dealer implements Serializable {
         
         // If the hand isBroke, we're done with this hand
         if(hand.isBroke()) {
+            
+            active = null;
+            
             updateBankroll(hid,LOSS);
             
             // Tell everyone what happened
@@ -413,6 +416,9 @@ public class Dealer implements Serializable {
         }
         // If hand got a isCharlie, we're done with this hand
         else if(hand.isCharlie()) {
+            
+            active = null;
+            
             hid.multiplyAmt(CHARLIE_PAYS);
             
             updateBankroll(hid,PROFIT);
@@ -425,6 +431,9 @@ public class Dealer implements Serializable {
         }
         // Player has 21: don't force player to break!
         else if(hand.getValue() == 21) {
+            
+            active = null;
+            
             goNextHand();
         }
     }    
@@ -510,7 +519,10 @@ public class Dealer implements Serializable {
         // does side bet and did or did not already.
         Hid newHid = new Hid(hid.getSeat(), hid.getAmt(), 0);
         
+        // Want to let the HID's know they have been split aready
+        // to enforce 'rules' about splitting splits later
         newHid.setSplit(true);
+        hid.setSplit(true);
         
         // Let us split the original hand.
         Hand newHand = origHand.split(newHid);
@@ -546,6 +558,8 @@ public class Dealer implements Serializable {
      */
     protected void goNextHand() {
         LOG.info("going to next hand");
+        
+        active = null;
         
         // Get next hand and inform player
         if (handSeqIndex < handSequence.size()) {
