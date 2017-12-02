@@ -76,7 +76,7 @@ public class Dealer implements Serializable {
     protected boolean shufflePending = false;
     
     // To "delay" deal so cards do not come out too fast
-    private final int DEAL_DELAY = 1500;
+    private final int DEAL_DELAY = 1000;
     
     /**
      * Constructor
@@ -535,7 +535,7 @@ public class Dealer implements Serializable {
         
         // Send back to the ATable what has just occured.
         player.split(newHid, hid);
-        
+                
         // Need to hit the one of the hands, might as well make it the 
         // original.
         this.hit(player, hid);

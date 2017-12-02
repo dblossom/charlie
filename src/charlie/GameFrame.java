@@ -769,11 +769,30 @@ public class GameFrame extends javax.swing.JFrame {
     }
     
     /**
-     * Adds a hid to hid list. 
-     * @param hid the hid to add
+     * Once ATable receives successful split from dealer
+     * This method is called to update GameFrame hand/hids
+     * @param newHid the new hid to be added
+     * @param origHid the original hid to be edited
      */
-    public void addHandList(Hid hid){
-        this.hids.add(hid);
+    public void split(Hid newHid, Hid origHid){
+        this.hids.add(newHid);
+        
+        // Create two hands from cards.
+        Hand newHandLeft = new Hand(origHid);
+        Hand newHandRight = new Hand(newHid);
+        
+        // Hit each and with one of the split cards
+        Card leftCard = hands.get(origHid).getCard(0);
+        Card rightCard = hands.get(origHid).getCard(1);
+        
+        newHandLeft.hit(leftCard);
+        newHandRight.hit(rightCard);
+        
+        // Replace the original hand with the left
+        hands.put(origHid, newHandLeft);
+        
+        // Add the new hand.
+        hands.put(newHid, newHandRight);
     }
     
     /**

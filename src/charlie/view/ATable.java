@@ -469,7 +469,6 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
                 }
             }).start();
         }
-            
     }
 
     /**
@@ -963,9 +962,9 @@ public final class ATable extends JPanel implements Runnable, IUi, MouseListener
         // Add bet to table -- do we want to make something different?
         AMoneyManager money = this.monies.get(newHid.getSeat());
         money.split();
-        
-        // Need to add our hid to the frames array of hids.
-        this.frame.addHandList(newHid);
+
+        // actions to be taken to update the GameFrame
+        this.frame.split(newHid, origHid);
         
         if(this.logan != null){
             this.logan.split(newHid, origHid);
