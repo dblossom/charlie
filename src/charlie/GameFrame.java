@@ -786,6 +786,7 @@ public class GameFrame extends javax.swing.JFrame {
         newHandRight.hit(rightCard);
         
         // Replace the original hand with the left
+        hands.remove(origHid);
         hands.put(origHid, newHandLeft);
         
         // Add the new hand.
